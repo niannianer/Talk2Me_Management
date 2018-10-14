@@ -53,9 +53,9 @@
                          active-class="menu-active"
                          replace>用户管理
             </router-link>
-            <div class="close">
+            <!-- <div class="close">
                 <el-button size="small" class="close" type="danger" plain @click="toOut">退出</el-button>
-            </div>
+            </div> -->
         </div>
         <router-view flex-box="1" class="content-view"></router-view>
     </div>
