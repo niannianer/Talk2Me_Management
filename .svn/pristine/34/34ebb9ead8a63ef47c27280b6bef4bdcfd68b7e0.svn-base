@@ -1,0 +1,158 @@
+<template>
+    <div class="claim-edit" flex="dir:top">
+        <div v-if="step == 1">
+            <merchant-info
+                    channel="claim"
+                    :source = "query.source"
+                    :buttonText = "buttonText_1"
+                    @complete="complete"></merchant-info>
+        </div>
+        <div v-else-if="step == 2">
+            <nav-title title="认领服务商"></nav-title>
+            <authentication
+                    channel="claim"
+                    :buttonText = "buttonText"
+                    @complete="submit"></authentication>
+        </div>
+    </div>
+</template>
+
+<script>
+    import MerchantInfo from '../components/MerchantInfo/MerchantInfo';
+    import Authentication from '../components/Authentition/Authentition';
+    import NavTitle from '../components/nav/nav';
+    import $api2 from '../../Common/tools/api2';
+    import {session} from '../../Common/tools/store';
+    import {mapState} from 'vuex';
+    import {setTitle} from '../../Common/tools/operation';
+
+    export default {
+        name: 'claim-edit',
+        data(){
+            return {
+                step: 1,
+                info: {},
+                buttonText_1: '',
+                buttonText: '',
+                query: {},
+                mId:''
+            }
+        },
+        created(){
+            this.query = this.$route.query || {};
+            this.step = this.query.step || 1;
+            this.mId = this.query.mId;
+            if(this.query.action == 'claim'){
+                this.buttonText_1 = "继续";
+            }
+            if(!this.query.flag){
+                this.buttonText = "认领";
+            }else{
+                this.buttonText = "重新认领";
+            }
+        },
+        components: {
+            MerchantInfo, Authentication,NavTitle
+        },
+        computed: {
+            ...mapState(['isClaimed','unionid'])
+        },
+        methods: {
+            //商家信息填写完成
+            complete(result){
+                let omId = this.query.omId || '';
+                let flag = this.query.flag || '';
+                this.info.merchant = result;
+                //1、选择服务商，认领、重新认领，直接跳到认证页面，无需询问是否认领和提交保存商家信息
+                if(this.query.action == 'claim'){
+                    this.step = 2;
+                    //根据flag参数判断选择的是已被认领服务商还是未被认领的服务商，是否需要传oldMerchantId
+                    if(flag) {
+                        this.info.merchant.oldMerchantId = omId;
+                    }
+                    setTitle('用户认证');
+                    return false;
+                }
+                //2、新添加的服务商之后流程
+                if(this.isClaimed){
+                    //2.1该账户已认领了服务商:直接保存服务商信息
+                    this.saveApi().then( res => {
+                        if(res.status){
+                            this.$message.success('提交成功！');
+                            this.$router.replace('/management/merchant/label-claim');
+                        }else{
+                            this.$message.error('提交失败,请稍后再试！');
+                        }
+                    });
+                }else{
+                    //2.2该账户未认领过服务商
+                    this.$confirm('是否认领该服务商？', '提示', {
+                      confirmButtonText: '是',
+                      cancelButtonText: '否',
+                      type: 'warning'
+                    }).then(() => {
+                      //保存服务商信息,flag判断是编辑还是添加
+                        if(this.query.flag){
+                            this.info.id = this.info.merchantId;
+                            delete this.info['merchantId'];
+                        }
+                        this.saveApi();
+                        //进入认证信息页面
+                        this.step = 2;
+                        setTitle('用户认证');
+                    }).catch(() => {
+                      //直接保存
+                        this.saveApi().then(res => {
+                            if(res.status != 0){
+                                this.$message.success('提交成功！');
+                                this.$router.replace('/management/merchant/label-claim');
+                            }else{
+                                this.$message.error('提交失败,请稍后再试！');
+                            }
+                        });         
+                    });
+                }
+            },
+            //信息填写完成
+            submit(result){
+                this.info.authentication = result;
+                //认领
+                if(!this.query.flag){
+                    this.submitApi();
+                    return false;
+                }
+                //重新认领
+                $api2.post('/secure/merchant/all/save',this.info).then(res => {
+                    if(res.status){
+                        this.$message.success('提交信息成功，请等待审核！');
+                        this.$router.replace('/management/merchant/label-claim');
+                    }else {
+                        this.$message.error('提交失败！请稍后再试');
+                    }
+                })
+            },
+            //商家信息提交调用API
+            saveApi(){
+                return $api2.post('/secure/merchant/save',this.info.merchant);
+            },
+            //认证信息提交API
+            submitApi(){
+                $api2.post('/secure/merchant/save/authentication',this.info.authentication).then( res => {
+                    if(res.status){
+                        session.setItem('claimedMId',this.mId);
+                        session.setItem('isClaimed',true);
+                        let unionid = session.getItem('oldEmail') || this.unionid;
+                        this.$message.success('认领完成，等待审核!');
+                        this.$store.dispatch('getIsClaimed',unionid);
+                        this.$router.replace('/management/merchant/my-service');
+                    }else{
+                        this.$message.error('提交失败，请稍后再试');
+                    }
+                })
+            }
+        },
+        destroyed(){
+
+        }
+    }
+</script>

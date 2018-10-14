@@ -1,0 +1,31 @@
+@charset "UTF-8";
+@import "../../Common/less/variables.less";
+
+.authority-manage {
+    position: relative;
+    width: 100%;
+    .search-flag{
+        width: 200px;
+    }
+    .search-name{
+        margin-right: .5rem;
+    }
+    .search-input{
+        width: 300px;
+        margin: 0 15px;
+    }
+    .el-button+.el-button {
+        margin-left: 0px;
+    }
+    td{
+        width: 16.7%;
+        // &.width-10{
+        //     width: 10%;
+        // }
+    }
+    .page-tools{
+        margin-top:  15px;
+    }
+
+
+}

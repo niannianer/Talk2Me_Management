@@ -1,0 +1,51 @@
+//
+// Variables
+// --------------------------------------------------
+// Type
+// --------------------------------------------------
+@charset "UTF-8";
+@font-family-default: "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+@font-weight: 500;
+
+// colors--------------------------------------------------
+// 主色
+@color-text: #333; //主标题
+@color-text-secondary: #666; // 内容
+@color-text-gray:#999; // 副标题
+@color-split: #d8d8d8; //分割线的颜色
+@color-primary:#945823; //选中状态
+@color-primary-hover:#EBAC5B; //划过颜色
+
+// 背景颜色
+@bg-body: #ECF1F5; // body背景颜色
+@bg-content: #fff; //内容区背景颜色
+@bg-dark:#2D1B06; //暗色背景颜色
+@bg-menu-active:#945823;// 菜单选中背景
+@bg-content-title:#E2A456;//内容区标题颜色
+
+// --------------------------------------------------
+//btn 背景
+@bg-gradient: linear-gradient(to bottom, #EBAC5B 0%, #73370D 100%);
+@bg-botton:#409EFF;
+
+@warp-width:1024px;
+
+
+
+//  border --------------------------------------------------
+@border-default-width: 1px;
+@border-default-color: @color-split;
+@border-default: @border-default-width solid @border-default-color;
+@border-radius: 4px;
+@border-color: #ddd;
+
+@bg-button: #64C707; //btn 背景
+.my-table {
+    .el-table {
+        td {
+            padding: 8px 0;
+        }
+    }
+}
+
+

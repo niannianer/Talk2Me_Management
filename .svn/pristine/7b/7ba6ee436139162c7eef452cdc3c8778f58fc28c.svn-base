@@ -1,0 +1,30 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.label-claim {
+    position: relative;
+    width: 100%;
+    padding: 20px 10px 10px;
+    .title {
+        color: #000;
+        font-weight: 700;
+        padding: 10px 0;
+        border-bottom: 3px solid #40ccf6;
+    }
+    .my-table {
+        margin-top: 10px;
+        .el-table {
+            thead {
+                th {
+                    background-color: #e2e2e2;
+                }
+            }
+        }
+    }
+    .statement {
+        padding: 10px 0;
+        div {
+            padding-top: 10px;
+        }
+    }
+}

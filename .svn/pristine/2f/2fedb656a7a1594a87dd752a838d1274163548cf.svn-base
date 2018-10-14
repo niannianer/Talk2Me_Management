@@ -1,0 +1,53 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.contact-us{
+    .service {
+        border-top: 1px solid #f4f4f4;
+        padding-top: 10px;
+        .my-col {
+            padding-bottom: 25px;
+            .title {
+                font-size: 16px;
+                padding: 4px 0;
+                img {
+                    width: 20px;
+                    height: 20px;
+                    vertical-align: middle;
+                    margin-right: 5px;
+                }
+            }
+            .content {
+                color: #939393;
+            }
+        }
+    }
+    .message {
+        border-top: 1px solid #f4f4f4;
+        padding-top: 10px;
+        .text {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .inputs {
+            margin: 8px 0;
+            .name {
+                height: 32px;
+                line-height: 32px;
+                width: 80px;
+            }
+        }
+        .text-box {
+            margin-top: 10px;
+            border: 1px solid #dfdfdf;
+            width: 100%;
+            min-height: 120px;
+            font-size: 14px;
+            padding: 5px;
+        }
+    }
+    .btn {
+        padding: 20px 0;
+        text-align: center;
+    }
+}

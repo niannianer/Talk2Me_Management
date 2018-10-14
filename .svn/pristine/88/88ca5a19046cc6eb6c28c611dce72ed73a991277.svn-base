@@ -1,0 +1,84 @@
+<template>
+    <div class="menu-warp" flex flex-box="1">
+        <div class="menus" flex-box="0">
+            <router-link class="menu" :to="{path:'/management/menus/unsigned-user'}"
+                         active-class="menu-active"
+                         replace>未签用户
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/merchant-list'}"
+                         active-class="menu-active"
+                         replace>商家信息管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/merchant-audit'}"
+                         active-class="menu-active"
+                         replace>商家信息审核
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/service-type-manage'}"
+                         active-class="menu-active"
+                         replace>服务类型管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/port-dictionary'}"
+                         active-class="menu-active"
+                         replace>港口字典管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/region-dictionary'}"
+                         active-class="menu-active"
+                         replace>区域字典管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/charge-manage'}"
+                         active-class="menu-active"
+                         replace>收费类型管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/post-message'}"
+                         active-class="menu-active"
+                         replace>审核信息发布
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/keyword-manage'}"
+                         active-class="menu-active"
+                         replace>关键字缴费
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/authority-manage'}"
+                         active-class="menu-active"
+                         replace>权限管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/role-manage'}"
+                         active-class="menu-active"
+                         replace>角色管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/user-manage'}"
+                         active-class="menu-active"
+                         replace>用户管理
+            </router-link>
+            <div class="close">
+                <el-button size="small" class="close" type="danger" plain @click="toOut">退出</el-button>
+            </div>
+        </div>
+        <router-view flex-box="1" class="content-view"></router-view>
+    </div>
+</template>
+
+<script>
+    import $api from '../../Common/tools/api';
+    import {session} from '../../Common/tools/store.js';
+    import '../less/menus.less';
+    export default {
+        name: 'menus',
+        computed: {
+        },
+        methods: {
+            //退出登录
+            toOut(){
+                let authInfo = session.getItem('authInfo');
+                let token = authInfo.value;
+                $api.get('/user/logout',{access_token:token}).then(res => {
+                    if(res.status !== 1){
+                        this.$message.error('退出失败')
+                    }else {
+                        session.removeItem('authInfo');
+                        this.$router.push('/management/login')
+                    }
+                })
+            }
+        }
+    }
+</script>

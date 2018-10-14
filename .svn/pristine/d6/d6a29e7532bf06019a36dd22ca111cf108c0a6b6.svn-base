@@ -1,0 +1,42 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.my-attention {
+    width: 100%;
+    position: relative;
+    .lists {
+        margin: .5rem;
+        padding: .5rem .5rem 0;
+        border: 1px solid #ccc;
+        border-radius: .5rem;
+        box-shadow: 0 0 5px #aaa;
+        background-color: #fff;
+        div {
+            margin-bottom: .5rem;
+            &:first-child {
+                margin-bottom: 0;
+            }
+        }
+        .name {
+            font-weight: 600;
+            color: #000;
+            span {
+                height: 2rem;
+                line-height: 2rem;
+            }
+            .img {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+        .address {
+            font-size: .5rem;
+        }
+        .type {
+        }
+    }
+    .success-row {
+        width: 100%;
+        background-color: #efefef;
+    }
+}

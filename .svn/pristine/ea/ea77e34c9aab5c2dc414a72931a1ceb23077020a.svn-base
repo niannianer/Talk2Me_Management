@@ -1,0 +1,108 @@
+<template>
+    <div class="facilitator-comment" flex>
+        <div class="comment">
+            <div class="name">{{merchant.merchantName}}</div>
+            <div class="star" flex>
+                <span>评分：</span>
+                <el-rate
+                        v-model="starNumber"
+                        show-text
+                        :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+                </el-rate>
+            </div>
+            <div class="text">
+                <textarea class="text-box" placeholder="请输入您的评价" v-model="writeText"></textarea>
+                <div flex="main:right">
+                    <p v-show="!writeText">请输入至少15字</p>
+                    <p v-show="writeText">您已经输入{{textLength}}字</p>
+                </div>
+            </div>
+            <div class="btn">
+                <el-button type="warning" @click.stop="save">提交评价</el-button>
+            </div>
+        </div>
+        <div class="info">
+            <div class="name">{{merchant.merchantName}}</div>
+            <div>
+                <el-rate
+                        v-model="star"
+                        disabled>
+                </el-rate>
+            </div>
+            <div>{{merchant.address}}</div>
+            <div>{{merchant.service}}</div>
+            <div>{{merchant.telephone}}</div>
+            <div>{{content.serviceType}}</div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import Vue from 'vue';
+    import $api from '../../Common/tools/api';
+    import config from '../../Common/tools/config';
+    import {session} from "../../Common/tools/store";
+    import '../less/facilitator-comment.less';
+
+    export default {
+        name: 'facilitator-comment',
+        data(){
+            return {
+                content:{},
+                merchant:{},
+                merchantId: '',
+                imgServerUrl: '',
+                starNumber: 0,
+                star: 0,
+                writeText: '',
+                userEmail: '',
+            }
+        },
+        created(){
+            this.merchantId = this.$route.query.merchantId;
+            this.userEmail = session.getItem('oldEmail');
+            this.imgServerUrl = config.imgServerUrl;
+            this.getMerchants();
+        },
+        components: {
+        },
+        computed: {
+            //计算评论字数
+            textLength(){
+                return this.writeText.trim().split('').length
+            }
+        },
+        methods: {
+            //获取商家信息
+            getMerchants(){
+                $api.get('/secure/merchant/simplelist/query/merchantid',{merchantId:this.merchantId}).then(res => {
+                    if(res.status == 1){
+                        this.content = res.content;
+                        this.merchant = this.content.merchant;
+                        this.star = this.content.starNumber;
+                    }
+                });
+            },
+            //提交评价
+            save(){
+                $api.post('/secure/merchant/comment/save',
+                    {
+                        userType: 'user',
+                        merchantId: this.merchantId,
+                        userUinonid:this.userEmail,
+                        content:this.writeText,
+                        starNumber:this.starNumber
+                    }).then(res => {
+                    if(res.status == 1){
+                        this.$message.success('评价成功');
+                    }else {
+                        this.$message.error('评价失败');
+                    }
+                })
+            }
+        },
+        destroyed(){
+
+        }
+    }
+</script>

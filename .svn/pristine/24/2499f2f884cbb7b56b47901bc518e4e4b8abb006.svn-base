@@ -1,0 +1,200 @@
+<template>
+    <div class="keyword-manage">
+        <div flex-box="0" flex class="search">
+            <!--<div flex-box="0" flex="cross:center" class="search-flag">-->
+                <!--<span flex-box="0" class="search-name">状态</span>-->
+                <!--<div flex-box="1">-->
+                    <!--<el-select v-model="status" placeholder="请选择状态">-->
+                        <!--<el-option :label="item.nameZH"-->
+                                   <!--:value="item.value"-->
+                                   <!--v-for="item,index in comDatas.infoStatus">-->
+                        <!--</el-option>-->
+                    <!--</el-select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div flex-box="0" flex="cross:center" class="search-input">
+                <span flex-box="0" class="search-name">商家名称</span>
+                <div flex-box="1">
+                    <el-input v-model="merchantName" placeholder="请输入商家名称"></el-input>
+                </div>
+            </div>
+            <div flex-box="0" flex="cross:center" class="search-input">
+                <span flex-box="0" class="search-name">关键字</span>
+                <div flex-box="1">
+                    <el-input v-model="keywords" placeholder="请输入关键字"></el-input>
+                </div>
+            </div>
+        </div>
+        <div flex class="search">
+            <div style="margin:0 15px">
+                <span flex-box="0" class="search-name">服务日期</span>
+                <el-date-picker
+                        v-model="updateTime"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        unlink-panels
+                        value-format="timestamp">
+                </el-date-picker>
+            </div>
+            <div>
+                <el-button type="primary" @click.stop="onSearch">查询</el-button>
+            </div>
+        </div>
+
+        <div flex="main:justify">
+            <div class="curt-loca">当前位置：<span>关键字缴费管理</span></div>
+            <div> <el-button type="primary" @click.stop="toPage('add','')">添加</el-button></div>
+        </div>
+
+        <div flex-box="1">
+            <el-table :data="lists" border stripe
+                      size="small"
+                      v-loading="loading"
+                      :cell-class-name="redColor">
+                <el-table-column prop="merchantName" label="服务商" align="center"></el-table-column>
+                <el-table-column prop="keywords" label="关键字" align="center"></el-table-column>
+                <el-table-column prop="expenses" label="费用" width="80" align="center" sortable></el-table-column>
+                <el-table-column prop="purchaseDate" :formatter="formatTime" label="购买日期" align="center" width="100" sortable></el-table-column>
+                <el-table-column prop="startDate" :formatter="formatTime" label="服务开始日期" align="center" width="120" sortable></el-table-column>
+                <el-table-column prop="endDate" :formatter="formatTime" label="服务结束日期" align="center" width="120" sortable></el-table-column>
+                <el-table-column prop="red" :formatter="statusText" label="状态" align="center" width="100"></el-table-column>
+                <el-table-column prop="purchaseName" label="购买人" align="center" width="100"></el-table-column>
+                <el-table-column prop="phoneNumber" label="联系方式" align="center" width="100"></el-table-column>
+                <el-table-column prop="userId" label="操作人" align="center" width="100"></el-table-column>
+                <el-table-column fixed="right" label="操作" width="100" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="small" @click.stop="toPage('audit',scope.row)">编辑</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div flex="main:center" class="page-tools" v-if="totals">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="page+1"
+                        :page-sizes="[5,10, 20, 50]"
+                        :page-size="size"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        background
+                        :total="totals">
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import $api from '../../Common/tools/api';
+    import comDatas from '../../Common/tools/comDatas';
+    import {session,local} from '../../Common/tools/store.js';
+    import {issueStatusText, timeFormater} from '../../Common/filters/index.js';
+    import '../less/keyword-manage.less';
+    export default {
+        name: 'keyword-manage',
+        data(){
+            return {
+                comDatas,
+                lists: [],
+                merchantName: null,
+                keywords: null,
+                status: 1,
+                loading: false,
+                totals:0,
+                size:10,
+                page:0,
+                updateTime:'',
+                //查询数据
+                param: {},
+
+            }
+        },
+        created(){
+            this.searchData();
+        },
+        computed: {},
+        methods: {
+            //查询
+            onSearch(){
+                this.page = 0;
+                this.searchData();
+            },
+            //查询数据
+            searchData(){
+                this.param = {
+                    size: this.size,
+                    page: this.page
+                };
+                // if(this.status){
+                //     this.param.status = this.status;
+                // }else {
+                //     this.param.status = 0
+                // }
+                if(this.merchantName){
+                    this.param.merchantname = this.merchantName;
+                }
+                if(this.keywords){
+                    this.param.keywords = this.keywords;
+                }
+                //开始和结束时间成对出现
+                if(this.updateTime){
+                    this.param.startDate = this.updateTime[0].toString();
+                    this.param.endDate = this.updateTime[1].toString();
+                }
+                this.loading = true;
+                let newDate = Date.parse(new Date());
+                console.log(JSON.stringify(this.param));
+                $api.get('/secure/manage/keywords/list/query',this.param).then(res => {
+                    this.loading = false;
+                    if(res){
+                        this.lists = res.content || [];
+                        this.lists.map(item => {
+                           if(newDate <= item.endDate){
+                               item.red = 1;
+                           }else {
+                               item.red = 0;
+                           }
+                        });
+                        this.totals = res.totalElements;
+                    }
+                });
+            },
+            //跳转到关键字缴费详情
+            toPage(type,row){
+                this.$router.push(`/management/menus/keyword-edit?type=${type}&mId=${row.id}`);
+            },
+            handleSizeChange(val){
+                this.size = val;
+                this.searchData();
+            },
+            handleCurrentChange(val){
+                this.page = val-1;
+                this.searchData();
+            },
+            redColor({row, column, rowIndex, columnIndex}){
+                if(row.red == 0){
+                    return 'redColor'
+                }
+            },
+            //审核状态
+            statusText(row,column){
+                let status =  row[column.property];
+                if(status == 0){
+                    return '服务已结束'
+                }else if(status == 1){
+                    return '服务未结束'
+                }
+                return status
+            },
+            //时间
+            formatTime(row,column){
+                let time =  row[column.property];
+                return timeFormater(time,'yyyy-MM-dd');
+            },
+        },
+        destroyed(){
+
+        }
+    }
+</script>

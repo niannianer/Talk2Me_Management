@@ -1,0 +1,126 @@
+/**
+ * Created by R.lq on 2018/3/27.
+ */
+import 'babel-polyfill';
+import axios from 'axios';
+import config from './config';
+import {session} from './store';
+import {refreshToken} from './operation.js';
+
+let serverUrl = config.apiUrl;
+let query = data => {
+    let str = [];
+    for (let key in data) {
+        if (data.hasOwnProperty(key)) {
+            if (typeof data[key] != 'object') {
+                str.push(encodeURIComponent(key) + '=' + encodeURIComponent((data[key])));
+            } else {
+                str.push(encodeURIComponent(key) + '=' + encodeURIComponent((JSON.stringify(data[key]))));
+            }
+        }
+    }
+    return str.join('&');
+};
+let get = (path, data = {}) => {
+    let authInfo = session.getItem('authInfoMerchant');
+    //data.t = new Date().getTime();
+    let isSecure = path.indexOf("/secure/dictionary") > -1 || path.indexOf("/secure/manage") > -1 || path.indexOf("/secure/merchant") > -1 || path.indexOf("/user/list") > -1 || path.indexOf("/user/role") > -1 || path.indexOf("/user/permission") > -1 || path.indexOf("/user/logout") > -1;
+    if(isSecure){
+        data.access_token = authInfo.value;
+    }
+    let search = query(data);
+    let url = `${serverUrl}${path}?${search}`;
+    return axios({
+        url,
+        timeout: 10000,
+        method: 'get',
+        withCredentials: true
+    }).then(response => {
+        if (response.status == 200) {
+            return response.data;
+        }
+    }).then(data => {
+        return data;
+    }).catch(err => {
+        console.log('err.request  ' + JSON.stringify(err.request));
+        console.log('err.response  ' + JSON.stringify(err.response));
+        if(err.request.status != 0){
+            return err;
+        }
+        if(isSecure){
+            return refreshToken().then(res => {
+                if(res.error == 'invalid_grant'){
+                    window.location.href = '/management/login';
+                }else{
+                    session.setItem('authInfo',{value: res.value,refreshValue: res.refreshToken.value});
+                    return get(path, data);
+                }
+            });
+        }else{
+            return err;
+        }
+    });
+};
+let  post = (path, data = {},type) => {
+    let authInfo = session.getItem('authInfoMerchant');
+    //是需要校验登录的接口
+    let isSecure = path.indexOf("/secure/dictionary") > -1 || path.indexOf("/secure/manage") > -1 || path.indexOf("/secure/merchant") > -1 || path.indexOf("/user/list") > -1 || path.indexOf("/user/resetrole") > -1 || path.indexOf("/user/role") > -1 || path.indexOf("/user/permission") > -1;
+    if(isSecure && path.indexOf("/oauth/token") == -1){
+       if(path.indexOf("?") > -1){
+            path += `&access_token=${authInfo.value}`
+        }else{
+            path += `?access_token=${authInfo.value}`
+        } 
+    }
+    let url = `${serverUrl + path}`;
+    let axiosParam = {
+        url,
+        method: 'post',
+        withCredentials: true,
+        data: data
+    };
+    if(type == 'login' || type == 'refreshToken'){
+        axiosParam.auth = {
+            username: 'hifleet_home_pc',
+            password: 'hifleet_secret'
+        }
+    }
+    
+    //认证接口需要设置headers
+    if(path.indexOf("/oauth/token") > -1){
+        axiosParam.headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    }
+    console.log(axiosParam)
+    return axios(axiosParam).then(response => {
+        if (response.status == 200) {
+            return response.data
+        }
+        if (response.status == 503) {
+            return {};
+        }
+        return {};
+    }).then(data => {
+        return data;
+    }).catch(err => {
+        console.error('error,--->', err);
+        if(isSecure){
+            return refreshToken().then(res => {
+                if(res.error == 'invalid_grant'){
+                    window.location.href = '/management/login';
+                }else{
+                    session.setItem('authInfo',{value: res.value,refreshValue: res.refreshToken.value});
+                    return post(path, data);
+                }
+            });
+        }else{
+            return err;
+        }
+    });
+};
+
+const $api = {
+    get,
+    post,
+    serverUrl
+};
+export default $api;

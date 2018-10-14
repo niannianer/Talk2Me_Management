@@ -1,0 +1,11 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.post-message {
+    position: relative;
+    width: 100%;
+    .text-title {
+        padding: 10px 0;
+        font-size: 16px;
+    }
+}

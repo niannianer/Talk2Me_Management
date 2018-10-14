@@ -1,0 +1,222 @@
+<template>
+    <div class="post-message">
+        <div flex-box="0" flex class="search">
+            <div flex-box="0" flex="cross:center" class="search-flag">
+                <span flex-box="0" class="search-name">审核状态</span>
+                <div flex-box="1">
+                    <el-select v-model="verifyFlag" placeholder="请选择状态">
+                        <el-option label="全部"
+                                   :value="''">
+                        </el-option>
+                        <el-option :label="item.nameZH"
+                                   :value="item.value"
+                                   v-for="item,index in comDatas.issueStatus">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+
+            <div flex-box="0" flex="cross:center" class="search-input">
+                <span flex-box="0" class="search-name">商家名称</span>
+                <div flex-box="1">
+                    <el-input v-model="merchantName" placeholder="输入商家名称"></el-input>
+                </div>
+            </div>
+        </div>
+        <div flex class="search">
+            <div style="margin-right: 20px">
+                <el-date-picker
+                        v-model="updateTime"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        unlink-panels
+                        value-format="timestamp">
+                </el-date-picker>
+            </div>
+            <div>
+                <el-button type="primary" @click.stop="onSearch">查询</el-button>
+            </div>
+        </div>
+
+        <div>
+            <div class="curt-loca">当前位置：<span>审核信息发布</span></div>
+        </div>
+
+        <div flex-box="1">
+            <el-table :data="lists" border stripe
+                      size="small"
+                      v-loading="loading">
+                <el-table-column prop="merchantName" label="商家名称" align="center"></el-table-column>
+                <el-table-column prop="content" label="内容" align="center"></el-table-column>
+                <el-table-column prop="submitTime" :formatter="formatTime" label="提交时间" align="center" width="90"></el-table-column>
+                <el-table-column prop="verifyTime" :formatter="formatTime" label="审核时间" align="center" width="90"></el-table-column>
+                <el-table-column prop="sendTime" :formatter="formatTime" label="发布时间" align="center" width="90"></el-table-column>
+                <el-table-column prop="verifyFlag" :formatter="statusText" label="审核状态" align="center" width="100"></el-table-column>
+                <el-table-column prop="verifyUserId" label="审核人" align="center" width="100"></el-table-column>
+                <el-table-column fixed="right" label="操作" width="100" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="small" @click.stop="toChoose(scope.row)">编辑</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div flex="main:center" class="page-tools" v-if="totals">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="page+1"
+                        :page-sizes="[5,10, 20, 50]"
+                        :page-size="size"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        background
+                        :total="totals">
+                </el-pagination>
+            </div>
+
+            <el-dialog :visible.sync="showDialog">
+                <div class="inner-box">
+                    <div flex="cross:center" class="form-item">
+                        <label class="item-label" flex-box="0">审核状态</label>
+                        <div flex-box="1">
+                            <el-select v-model="verifyFlagChoose" placeholder="请选择审核状态">
+                                <el-option :label="item.nameZH"
+                                           :value="item.value"
+                                           v-for="item,index in comDatas.issueStatus">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div slot="footer" flex="main:center">
+                        <el-button type="info" @click="showDialog = false">取 消</el-button>
+                        <el-button type="primary" @click.stop="chooseSave">提 交</el-button>
+                    </div>
+                </div>
+            </el-dialog>
+        </div>
+    </div>
+</template>
+<script>
+    import $api from '../../Common/tools/api';
+    import comDatas from '../../Common/tools/comDatas';
+    import {session,local} from '../../Common/tools/store.js';
+    import {issueStatusText, timeFormater} from '../../Common/filters/index.js';
+    import '../less/post-message.less';
+    export default {
+        name: 'post-message',
+        data(){
+            return {
+                comDatas,
+                lists: [],
+                merchantName: null,
+                verifyFlag: '',
+                verifyFlagChoose: null,
+                loading: false,
+                submitStartTime: null,
+                submitEndTime: null,
+                showDialog:false,
+                totals:0,
+                size:10,
+                page:0,
+                //查询数据
+                param: {},
+                //保存审核状态数据
+                params: {},
+                verifyUserId:'',
+                updateTime:''
+            }
+        },
+        created(){
+            this.verifyUserId = local.getItem('userEmail');
+            this.searchData();
+        },
+        computed: {},
+        methods: {
+            //查询
+            onSearch(){
+                this.page = 0;
+                this.searchData();
+            },
+            //查询数据
+            searchData(){
+                this.param = {
+                  size: this.size,
+                  page: this.page
+                };
+                if(this.merchantName){
+                    this.param.merchantName = this.merchantName;
+                }
+                if(this.verifyFlag){
+                    this.param.verifyFlag = this.verifyFlag;
+                }
+                //开始和结束时间成对出现
+                if(this.updateTime){
+                    this.param.submitStartTime = this.updateTime[0].toString();
+                    this.param.submitEndTime = this.updateTime[1].toString();
+
+                }
+                this.loading = true;
+                console.log(JSON.stringify(this.param))
+                $api.get('/secure/manage/merchant/notification/queryPage',this.param)
+                    .then(res => {
+                        this.loading = false;
+                        if(res){
+                            this.lists = res.content || [];
+                            this.totals = res.totalElements;
+                        }
+                });
+            },
+            //选择审核状态
+            toChoose(row){
+                this.showDialog = true;
+                this.verifyFlagChoose = row.verifyFlag;
+                this.params = {
+                    verifyFlag: 1,
+                    content: row.content,
+                    notificationId: row.notificationId,
+                    userId: row.userId,
+                    verifyUserId: this.verifyUserId,
+                    merchantId: row.merchantId,
+                }
+                // alert(JSON.stringify(this.params))
+            },
+            //提交
+            chooseSave(){
+                this.params.verifyFlag = this.verifyFlagChoose;
+                // console.log(JSON.stringify(this.params))
+                $api.post('/secure/merchant/notification/save',this.params).then(res => {
+                    if(res.status == 1){
+                        this.$message.success('提交成功');
+                        this.searchData();
+                    }else {
+                        this.$message.error('提交失败')
+                    }
+
+                    this.showDialog = false;
+                })
+            },
+            handleSizeChange(val){
+                this.size = val;
+                this.searchData();
+            },
+            handleCurrentChange(val){
+                this.page = val-1;
+                this.searchData();
+            },
+            //审核状态
+            statusText(row,column){
+                let status =  row[column.property];
+                return issueStatusText(status);
+            },
+            //时间
+            formatTime(row,column){
+                let time =  row[column.property];
+                return timeFormater(time,'yyyy-MM-dd hh:mm:ss');
+            },
+        },
+        destroyed(){
+
+        }
+    }
+</script>

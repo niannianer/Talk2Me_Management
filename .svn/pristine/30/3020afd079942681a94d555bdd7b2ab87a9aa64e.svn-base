@@ -1,0 +1,57 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.role-manage{
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 1rem;
+    .search-flag{
+        width: 200px;
+    }
+    .search-name{
+        margin-right: .5rem;
+    }
+    .search-input{
+        width: 300px;
+        margin: 0 15px;
+    }
+    .width_8{
+        width: 80px;
+    }
+    .action-btn{
+        margin: 15px;
+    }
+    .update-btn{
+        margin-left: 15px;
+    }
+    .auth-form{
+        width: 600px;
+        margin-left: 50px;
+    }
+    .inner-box{
+        width: 400px;
+        margin: auto;
+    }
+    .form-item{
+        width: 100%;
+        .item-label{
+            min-width: 110px;
+            text-align: right;
+            vertical-align: middle;
+            float: left;
+            font-size: 14px;
+            color: #606266;
+            line-height: 40px;
+            padding: 0 12px 0 0;
+        }
+    }
+    .el-border {
+        padding: 5px 5px 5px 10px;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+    }
+    .page-tools{
+        margin-top:  15px;
+    }
+
+}

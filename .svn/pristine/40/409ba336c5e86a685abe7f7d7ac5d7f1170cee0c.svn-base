@@ -1,0 +1,43 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.merchant-search {
+    width: 378px;
+    min-height: 200px;
+    position: relative;
+    background-color: #fff;
+    .choose-head {
+	    width: 500px;
+	    padding:10px 10px 0;
+	    background-color: #fff;
+	    align-items: center;
+	    .name-label{
+	    	width: 150px;
+	    }
+	    .btn-search{
+	    	margin-left: 20px;
+	    }
+
+	}
+	.msg-text{
+	    	color: #777;
+	    	margin: 15px 0 15px 10px;
+	    }
+	.table-box{
+		margin-top: 20px;
+		.el-radio__label{
+			display: none;
+		}
+		.start-icon{
+			width: 20px;
+			height: auto;
+		}
+	}
+    .statement{
+        padding: 10px 30px 10px;
+        text-align: right;
+        div {
+            padding-top: 10px;
+    	}
+    }
+}

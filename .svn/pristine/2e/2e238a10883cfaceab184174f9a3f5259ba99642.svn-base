@@ -1,0 +1,120 @@
+<template>
+    <div class="post-message">
+        <nav-title title="信息发布"></nav-title>
+        <div class="my-table">
+            <el-table
+                    :row-class-name="tableRowClassName"
+                    :data="messagesList">
+                <el-table-column prop="content" label="内容" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="submitTime" label="日期" :formatter="formatTime" width="150"></el-table-column>
+                <el-table-column prop="verifyFlag" label="审核状态" :formatter="statusText" width="100"></el-table-column>
+            </el-table>
+        </div>
+        <div class="text-title">信息编辑</div>
+        <div class="content">
+            <textarea class="text-box" placeholder="提交最新有效信息，发给您的粉丝用户。" v-model="writeText"></textarea>
+        </div>
+        <div flex="dir:right" class="btn">
+            <el-button type="primary" size="small" @click="sendMessage">提交发送</el-button>
+            <p style="margin-right: 20px">您的信息提交后将进行审核，通过后即发送给用户</p>
+        </div>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2';
+    import {mapState} from 'vuex';
+    import NavTitle from '../components/nav/nav';
+    import {issueStatusText, timeFormater} from '../../Common/filters/index.js';
+    import '../less/post-message.less'
+    import {session} from "../../Common/tools/store";
+    export default {
+        name: "post-message",
+        data(){
+            return{
+                writeText:'',
+                messagesList:[],
+                times:0,
+            }
+        },
+        created(){
+            this.getList();
+        },
+        computed:{
+            ...mapState(['claimedMId','isClaimed','unionid'])
+        },
+        components:{
+            NavTitle
+        },
+        methods:{
+            //获取发布信息列表
+            getList(){
+                $api2.get('/secure/merchant/notification/querylist',
+                    {
+                        merchantId: this.claimedMId,
+                    }).then(res => {
+                    if(res.status == 1){
+                        this.messagesList = res.content;
+                        //判断本月发送次数
+                        let firstDate = new Date();
+                        firstDate.setDate(1);
+                        let endDate = new Date(firstDate);
+                        endDate.setMonth(firstDate.getMonth()+1);
+                        endDate.setDate(0);
+                        firstDate = Date.parse(firstDate);
+                        endDate = Date.parse(endDate);
+                        this.messagesList.forEach(item =>{
+                            if(item.submitTime > firstDate && item.submitTime < endDate){
+                                this.times++
+                            }
+                        })
+                    }
+                })
+            },
+            //发布信息
+            sendMessage(){
+                console.log('times   ' + this.times);
+                if(!this.writeText){
+                    this.$message.warning('请输入内容');
+                    return false
+                }
+                if (this.times >= 4){
+                    this.$message.warning('您本月发送次数已用完');
+                    return false
+                }
+                let param = {
+                            userId:this.unionid,
+                            merchantId:this.claimedMId,
+                            content:this.writeText,
+                            verifyFlag:1,
+                            };
+                console.log(param);
+                $api2.post('/secure/merchant/notification/save',param).then(res => {
+                    if(res.status == 1){
+                        this.$message.success('提交信息已成功，待审核通过后即发送至您的粉丝用户，如审核未通过，请重新提交。');
+                        this.writeText = '';
+                        this.getList()
+                    }else {
+                        this.$message.warning('提交信息失败，请重新提交。');
+                    }
+                })
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex%2 == 0) {
+                    return 'success-row';
+                }
+            },
+            //审核状态
+            statusText(row,column){
+                let status =  row[column.property];
+                return issueStatusText(status);
+
+            },
+            //时间
+            formatTime(row,column){
+                let time =  row[column.property];
+                return timeFormater(time,'yyyy-MM-dd hh:mm');
+            },
+        }
+    }
+</script>

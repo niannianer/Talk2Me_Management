@@ -1,0 +1,261 @@
+<template>
+    <div class="my-service">
+        <el-scrollbar style="height: 100%">
+            <nav-title :title="merchant.merchantName || '我的服务'"></nav-title>
+            <div flex class="status-action">
+                <div class="status-box" flex-box="1">
+                    审核进度：{{claimInfo.flag | auditStatusText}}
+                    <span class="remind-text">审核通过后3个月内不能进行信息修改</span>
+                </div>
+                <!--<button flex-box="0" class="auth-btn" @click.stop="claimAgain" v-if="!canEdit && buttonText">{{buttonText}}</button>-->
+            </div>
+            <div class="info">
+                <div class="inner-title" flex="main:justify">
+                    <div class="sub-name">商家基本信息</div>
+                    <el-button type="primary" size="mini" @click.stop="actionTo('merchant')" style="margin-right: 15px">修改</el-button>
+                </div>
+                <el-row :gutter="20">
+                    <el-col :span="12"><div><span class="label-name">联系人：</span>{{merchant.linkname}}</div></el-col>
+                    <el-col :span="12"><div><span class="label-name">地址：</span>{{merchant.address}}</div></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="12"><div><span class="label-name">手机号：</span>{{phone}}</div></el-col>
+                    <el-col :span="12"><div><span class="label-name">Email：</span>{{merchant.email}}</div></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="12"><div><span class="label-name">座机号：</span>{{tele}}</div></el-col>
+                    <el-col :span="12"><div><span class="label-name">服务类型：</span>{{portcode}}</div></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="12"><div><span class="label-name">服务商类型：</span>{{serviceTypes}}</div></el-col>
+                    <el-col :span="12"><div><span class="label-name">服务港口：</span>{{portcode}}</div></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24"><div><span class="label-name">提供的服务：</span>{{merchant.service}}</div></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <div class="muti-box" flex><div class="label-name">产品及服务图片或文件：</div>
+                            <div>
+                                <img :src="item" v-for="item in thumb" class="img-path">
+                            </div>
+                        </div>
+                    </el-col>
+                </el-row>
+                <div>
+                    <div class="inner-title" flex="main:justify">
+                        <div class="sub-name">认证信息</div>
+                        <el-button type="primary" size="mini" @click.stop="actionTo('auth')" style="margin-right: 15px">修改</el-button>
+                    </div>
+                    <el-row :gutter="20">
+                        <el-col :span="12"><div><span class="label-name">确认人姓名：</span>{{claimInfo.confirmName}}</div></el-col>
+                        <el-col :span="12"><div><span class="label-name">确认人电话：</span>{{claimInfo.confirmTel}}</div></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12"><div><span class="label-name">资质注册号：</span>{{claimInfo.registCode}}</div></el-col>
+                        <el-col :span="12"><div><span class="label-name">认领人身份证号码：</span>{{claimInfo.iDcode}}</div></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <div flex>
+                                <div class="label-name">认领人手持身份证照：</div>
+                                <div>
+                                    <img :src="imgServerUrl+claimInfo.catchIDPath" class="img-path" v-if="claimInfo.catchIDPath">
+                                </div>
+                            </div>
+                        </el-col>
+                        <el-col :span="12">
+                            <div flex>
+                                <div class="label-name">门脸照片：</div>
+                                <div>
+                                    <img :src="imgServerUrl+claimInfo.facePhotoPath" class="img-path" v-if="claimInfo.facePhotoPath">
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <div flex>
+                                <div class="label-name">资质证照：</div>
+                                <div>
+                                    <img :src="imgServerUrl+claimInfo.licensePath" class="img-path" v-if="claimInfo.licensePath">
+                                </div>
+                            </div>
+                        </el-col>
+                        <el-col :span="12">
+                            <div flex>
+                                <div class="label-name">专业资质证书：</div>
+                                <div>
+                                    <img :src="imgServerUrl+claimInfo.copyPath" class="img-path">
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="24">
+                            <div flex>
+                                <div class="label-name">认领确认书：</div>
+                                <div>
+                                    <img :src="imgServerUrl+claimInfo.confirmPath" class="img-path" v-if="claimInfo.confirmPath">
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="24">
+                            <div flex>
+                                <div class="label-name">其它证明材料：</div>
+                                <div>
+                                    <img v-for="item in claimInfo.othersPath" :src="imgServerUrl+item" class="img-path" >
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+        </el-scrollbar>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2.js';
+    import {mapState} from 'vuex';
+    import {session} from '../../Common/tools/store';
+    import NavTitle from '../components/nav/nav';
+    import config from '../../Common/tools/config';
+    import '../less/my-service.less'
+    export default {
+        name: 'my-service',
+        data(){
+            return {
+                canEdit: false,
+                canEditTime: '',
+                merchantList: [],
+                merchant:{
+                    merchantName:''
+                },
+                //座机号
+                tele:'',
+                //手机号
+                phone:'',
+                serviceTypes:'',
+                portcode:'',
+                claimInfo: {
+                    merchantId: '',
+                    iDPath:'',
+                    facePhotoPath: '',
+                    catchIDPath: '',
+                    copyPath: '',
+                    confirmPath: '',
+                    othersPath: []
+                },
+                claimedMId: '',
+                imgServerUrl: '',
+                thumb: []
+            }
+        },
+        created(){
+            this.claimedMId = session.getItem('claimedMId');
+            let isClaimed = session.getItem('isClaimed');
+            // if(!isClaimed){
+            //     this.$router.replace('/management/merchant/merchant-search');
+            //     return false;
+            // }
+            this.imgServerUrl = config.imgServerUrl + '/';
+            this.getInfo();
+            this.getClaim();
+        },
+        computed: {
+            //...mapState(['claimedMId'])
+        },
+        components: {
+            NavTitle
+        },
+        methods: {
+            //获取服务商信息
+            getInfo(){
+                $api2.get('/secure/merchant/query/merchantid',{
+                    merchantId: this.claimedMId
+                }).then(res => {
+                    this.merchantList = res.content;
+                    this.merchant = res.content.merchant || {};
+                    this.tele = this.merchant.telephone.split(',')[0];
+                    this.phone = this.merchant.telephone.split(',')[1];
+                    this.serviceTypes = this.merchantList.serviceTypes.map(item => {
+                        return item.nameZh
+                    }).join(', ');
+                    this.portcode = this.merchantList.ports.map(item => {
+                        return item.cnportname
+                    }).join(', ');
+                    this.merchant.thumb = JSON.parse(this.merchant.thumb || '[]');
+                    if(this.merchant.thumb.length){
+                      this.merchant.thumb.forEach(val => {
+                        this.thumb.push(`${this.imgServerUrl}${val}`);
+                    });
+                    }
+                }).catch(err =>{
+                    console.log(err)
+                })
+            },
+            //获取认证信息
+            getClaim(){
+                $api2.get('/secure/merchant/query/authentication/merchantid',{
+                    merchantId: this.claimedMId
+                }).then(res => {
+                    if(res.status !== 1){
+                        return;
+                    }
+                    this.claimInfo = res.content;
+                    this.claimInfo.othersPath = JSON.parse(res.content.othersPath || '[]');
+                    if(this.claimInfo.flag == 4){
+                        this.expiredInfo();
+                    }else{
+                        this.canEdit = true;
+                    }
+                }).catch(err =>{
+                    console.log(err)
+                })
+            },
+            //点击修改
+            actionTo(type){
+                if(!this.canEdit){
+                    this.$message.error(`${this.canEditTime}之前不能修改！`);
+                    return false;
+                }
+                if(type == 'merchant'){
+                    this.$router.push(`/management/merchant/merchant-update?mId=${this.claimedMId}&type=edit`);
+                }
+                if(type == 'auth'){
+                    this.$router.push(`/management/merchant/authentition-update?mId=${this.claimedMId}&type=edit`);
+                    session.setItem('merchant',this.merchant);
+                }
+            },
+            //判断是否能修改信息
+            expiredInfo(){
+                $api2.get('/secure/merchant/expired',{
+                    authId: this.claimInf.id
+                }).then( res => {
+                    if(res.status == 1){
+                        this.canEdit = true;
+                    }else{
+                        this.canEdit = false;
+                        this.canEditTime = res.content;
+                    }
+                })
+            },
+            //切换为文字状态
+            getFlag(row,column) {
+                let status =  row[column.property];
+                if(status == 0){
+                    return '失效'
+                }else if(status == 1){
+                    return '正常'
+                }
+                return status
+            }
+        },
+        destroyed(){
+
+        }
+    }
+</script>

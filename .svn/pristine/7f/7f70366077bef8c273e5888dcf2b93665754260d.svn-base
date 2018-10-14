@@ -1,0 +1,8 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.app {
+    //background-color: #fff;
+    position: relative;
+    
+}

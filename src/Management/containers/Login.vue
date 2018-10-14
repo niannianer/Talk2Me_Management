@@ -1,0 +1,118 @@
+<template>
+    <div class="login" flex-box="1">
+        <div class="login-box">
+            <el-row>
+                <el-col>
+                    <el-input v-model="username" placeholder="请输入帐号">
+                        <template slot="prepend">帐号</template>
+                    </el-input>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-input v-model="password" type="password" placeholder="请输入密码" @keyup.enter.native="login">
+                        <template slot="prepend">密码</template>
+                    </el-input>
+                </el-col>
+            </el-row>
+            <el-row>
+                <div flex="main:justify">
+                    <div @click.stop="register" style="cursor: pointer;color: #47cdf5">注册</div>
+                    <div @click.stop="reset" style="cursor: pointer;color: #47cdf5">忘记密码</div>
+                </div>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-button @click.stop="login" style="width: 100%" type="primary">登录</el-button>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+</template>
+
+<script>
+    import $api from '../../Common/tools/api.js';
+    import {session,local} from '../../Common/tools/store.js';
+    import '../less/login.less';
+    export default {
+        name: 'login',
+        data(){
+            return {
+                username: '',
+                password: ''
+            }
+        },
+        created(){
+        },
+        computed: {},
+        methods: {
+            login(){
+                let {username, password} = this;
+                if(!username){
+                    this.$message.warning('请输入账号');
+                    return false;
+                }else if(!password){
+                    this.$message.warning('请输入密码');
+                    return false;
+                }
+                const loading = this.$loading();
+                $api.post(`/oauth/token?username=${username}&password=${password}&grant_type=password`,{},'login').then(res => {
+                    loading.close();
+                    console.log('res  ' + JSON.stringify(res));
+                    if(res.response){
+                        if(res.response.data.error == 400){
+                            this.$message.error('账号或密码错误');
+                            return false
+                        }
+                    }else {
+                        session.setItem('authInfo',{value: res.value,refreshValue: res.refreshToken.value});
+                        local.setItem('userEmail',username);
+                        let logoutUrl = session.getItem('logoutUrl');
+                        logoutUrl = decodeURIComponent(logoutUrl);
+                        if (logoutUrl && /http/.test(logoutUrl)) {
+                            window.location.replace(logoutUrl);
+                        }else{
+                            this.$router.replace('/management/menus/merchant-list');
+                        }
+                    }
+                }).catch(err => {
+                    console.log('err   ' + JSON.stringify(err))
+                });
+            },
+            //跳转到注册页
+            register(){
+                this.$router.push('/management/register');
+            },
+            //重设密码
+            reset(){
+                if(!this.username){
+                    this.$message.warning('请输入账号或邮箱')
+                }else {
+                    $api.get('/user/ifexist',{userStr:this.username}).then(res => {
+                        if(res.status == 0){
+                            this.$message.error('无此账号或邮箱')
+                        }else {
+                            this.sendEmail()
+                        }
+                    });
+                }
+            },
+            //发送链接
+            sendEmail(){
+                $api.get('/user/reset/reply',{userstr:this.username}).then(res => {
+                    if(res.status == 1){
+                        this.$message.success('已发送链接到您的邮箱中，点击链接后即可根据提示重设密码')
+                    }else {
+                        this.$message.warning('请重新操作')
+                    }
+                })
+            }
+        },
+        mounted(){
+
+        },
+        destroyed(){
+
+        }
+    }
+</script>

@@ -1,0 +1,96 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.label-claim {
+    position: relative;
+    width: 100%;
+    padding: 20px 10px 10px;
+    .statement {
+        color: #8d8d8d;
+        margin-top: -10px;
+        img {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
+    }
+    .my-table {
+        margin-top: 10px;
+        max-height: 218px;
+        .el-table {
+            thead {
+                th {
+                    background-color: #e0e0e0;
+                    color: #000;
+                }
+            }
+        }
+        .claim-img {
+            width: 18px;
+            height: 24px;
+        }
+        .no-active {
+            span {
+                display: inline-block;
+            }
+            .span1 {
+                border: 1px solid #ccc;
+            }
+            .span2 {
+                width: 16px;
+                height: 16px;
+                border: 4px solid #ccc;
+                border-radius: 8px;
+            }
+        }
+        .actived {
+            span {
+                border-color: #64C707;
+            }
+        }
+    }
+    .btns {
+        padding: 25px 0;
+        .prompt-message {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 5px;
+        }
+        button {
+            width: 420px;
+            height: 60px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 5px;
+        }
+        .btn1 {
+            background-color: #0071c8;
+        }
+        .btn2 {
+            background-color: #65c800;
+        }
+    }
+    .label {
+        .my-col {
+            width: 200px;
+            height: 180px;
+            margin: 0 auto;
+            .img {
+                width: 200px;
+                display: table-cell;
+                text-align: center;
+                img {
+                    width: 82px;
+                    height: 82px;
+                    margin-bottom: 10px;
+                }
+            }
+            .content {
+                text-align: center;
+                color: #000;
+                font-size: 15px;
+            }
+        }
+    }
+}

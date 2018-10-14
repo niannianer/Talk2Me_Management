@@ -1,0 +1,121 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+li {
+    list-style: none;
+}
+
+.comment-list {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    color: #000;
+    font-weight: 500;
+    .my-star {
+        margin: 12px 0 0 10px;
+    }
+    .comment-btn {
+        .el-button {
+            color: @button-bg;
+            border-color: @button-border;
+        }
+        .activate {
+            color: #fff;
+            background-color: @button-bg;
+            border:1px solid @button-border;
+        }
+    }
+    .comments {
+        padding: 5px 16px 20px;
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            margin-right: 10px;
+        }
+        .time {
+            font-size: 12px;
+            color: @color-text-gray;
+        }
+        .lists {
+            .name,.time {
+                padding: 5px 0;
+            }
+            .name {
+                font-size: 15px;
+            }
+            .star {
+                margin:1px 0 0 10px;
+                .el-rate {
+                    .el-rate__icon {
+                        font-size: 15px;
+                    }
+                }
+            }
+            .bottom {
+                padding-top: 5px;
+
+            }
+        }
+    }
+;
+    .reply-list {
+        margin-bottom: 6px;
+        ul {
+            padding-right: 10px;
+            font-size: 14px;
+            li {
+                line-height: 20px;
+                padding: 5px 0;
+            }
+        }
+    }
+    .reply {
+        background-color: #f2f2f2;
+        margin: 0 -26px -10px -16px;
+        padding: 10px 16px;
+    }
+    .btn {
+        min-height: 1rem;
+        .review-wrap {
+           margin: 10px -16px 0;
+            padding: 6px;
+            background-color: #f2f2f2;
+            button {
+                margin: 0 5px;
+            }
+            .review-btn {
+                .pb-icon {
+                    width: .9rem;
+                    height: .9rem;
+                    margin-right: .2rem;
+                }
+                span {
+                    margin-left: 15px;
+                    cursor: pointer;
+                    font-weight: bold;
+                }
+            }
+            .review-text {
+                width: 100%;
+            }
+        }
+        .write-icon {
+            width: .6rem;
+            margin-right: .2rem;
+        }
+        button {
+            margin-top: 9px;
+            float: right;
+            padding: 6px 20px;
+            border: 1px solid @button-border;
+            color: @button-border;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            background: #fff;
+        }
+    }
+}

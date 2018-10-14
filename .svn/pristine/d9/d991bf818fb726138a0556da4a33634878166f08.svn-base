@@ -1,0 +1,11 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.attention-me {
+    position: relative;
+    width: 100%;
+    .el-table .success-row {
+        width: 100%;
+        background-color: #efefef;
+    }
+}

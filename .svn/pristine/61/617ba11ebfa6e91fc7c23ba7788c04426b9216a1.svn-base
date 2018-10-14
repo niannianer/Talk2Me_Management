@@ -1,0 +1,44 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.service-type-manage{
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 1rem;
+    .el-radio__label{
+        display: none!important
+    }
+    .width_8{
+        width: 80px;
+    }
+    .action-btn{
+        margin: 15px;
+    }
+    .update-btn{
+        margin-left: 15px;
+    }
+    .auth-form{
+        width: 600px;
+        margin-left: 50px;
+    }
+    .inner-box{
+        width: 400px;
+        margin: auto;
+    }
+    .form-item{
+        width: 100%;
+        .item-label{
+            min-width: 110px;
+            text-align: right;
+            vertical-align: middle;
+            float: left;
+            font-size: 14px;
+            color: #606266;
+            line-height: 40px;
+            padding: 0 12px 0 0;
+        }
+    }
+
+
+
+}

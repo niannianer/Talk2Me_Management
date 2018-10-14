@@ -1,0 +1,27 @@
+<template>
+	<div class="nav-title" flex>
+		<div v-html="title" class="span"></div>
+	</div>
+</template>
+<script>
+	export default {
+        name: 'port-select',
+        props: ['title'],
+        data(){
+            return {}
+        }
+    }
+</script>
+<style lang="less" scoped="">
+	.nav-title {
+		padding: 10px 0;
+		margin-bottom: 20px;
+	}
+	.nav-title .span{
+	    color: #000;
+	    font-weight: 700;
+	    padding: 10px 0;
+	    border-bottom: 3px solid #40ccf6;
+		font-size: 16px;
+	}
+</style>

@@ -1,0 +1,50 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.tag-detail{
+    height: 100%;
+    .item-card{
+        background: #fff;
+        margin: 0 0 .5rem 0;
+        padding-left: .8rem;
+        .card-item{
+            font-size: .8rem;
+            padding: .8rem 0;
+            line-height: 1rem;
+            border-top: 1px solid rgba(151,151,151,.2);
+            &:first-child{
+                border: none;
+            }
+            .title{
+                color: @color-text;
+                padding: 0 .8rem 0 0;
+            }
+            .icon-warp {
+                text-align: right;
+                width: 50%;
+                padding-right: .8rem;
+                a{
+                    color: @color-text-secondary;
+                    text-decoration: none;
+                }
+                img{
+                    width: .6rem;
+                    height: .8rem;
+                    vertical-align: middle;
+                    margin-left: .5rem;
+                }
+                .avatar-item{
+                    display: inline-block;
+                    .img{
+                        width: 3.3rem;
+                        height: 3.3rem;
+                        border-radius: 50%;
+                    }
+                }
+                .address{
+                    margin-right: 4px;
+                }
+            }
+        }
+    }
+}

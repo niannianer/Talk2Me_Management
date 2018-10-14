@@ -1,0 +1,71 @@
+<template>
+    <div class="merchant" flex flex-box="1">
+        <div class="menus" flex-box="0">
+            <router-link class="menu" :to="{path:'/management/merchant/label-claim'}"
+                        @click.native="changeTab('label-claim')"
+                         active-class="menu-active"
+                         :class='{"menu-active": path == "label-claim" }'
+                         replace>标注和认领
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/my-service'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('my-service')"
+                         :class='{"menu-active": path == "my-service" }'
+                         replace>我的服务
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/comment-list'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('comment-list')"
+                         :class='{"menu-active": path == "comment-list" }'
+                         replace>评价管理
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/attention-me'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('attention-me')"
+                         :class='{"menu-active": path == "attention-me" }'
+                         replace>关注我的
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/post-message'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('post-message')"
+                         :class='{"menu-active": path == "post-message" }'
+                         replace>信息发布
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/my-attention'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('my-attention')"
+                         :class='{"menu-active": path == "my-attention" }'
+                         replace>我的关注
+            </router-link>
+            <router-link class="menu" :to="{path:'/management/merchant/contact-us'}"
+                         active-class="menu-active"
+                         @click.native="changeTab('contact-us')"
+                         :class='{"menu-active": path == "contact-us" }'
+                         replace>合作联系
+            </router-link>
+        </div>
+        <router-view flex-box="1" class="content-view"></router-view>
+    </div>
+</template>
+
+<script>
+    import '../less/merchant.less';
+    import {session} from '../../Common/tools/store';
+    export default {
+        name: 'merchant',
+        data(){
+          return{
+            path: ''
+          }
+        },
+        created(){
+        },
+        computed: {
+        },
+        methods: {
+            changeTab(tab){
+                this.path = tab;
+            }
+        }
+    }
+</script>

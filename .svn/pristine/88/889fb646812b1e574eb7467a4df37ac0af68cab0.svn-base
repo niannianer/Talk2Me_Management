@@ -1,0 +1,262 @@
+import Login from '../../Management/containers/Login';
+import Register from '../../Management/containers/Register';
+import ResetPassword from '../../Management/containers/ResetPassword';
+import Authentication from '../../Management/containers/Authentication';
+import UnsignedUser from '../../Management/containers/UnsignedUser';
+import ServiceTypeManage from '../../Management/containers/ServiceTypeManage';
+import MerchantList from '../../Management/containers/MerchantList';
+import MerchantAudit from '../../Management/containers/MerchantAudit';
+import PortDict from '../../Management/containers/PortDict';
+import PortParticulars from '../../Management/containers/PortParticulars';
+import RegionDict from '../../Management/containers/RegionDict';
+import MerchantEdit from '../../Management/containers/MerchantEdit';
+import ChargeManage from '../../Management/containers/ChargeManage';
+import CheckMessage from '../../Management/containers/CheckMessage';
+import AuthorityManage from '../../Management/containers/AuthorityManage';
+import RoleManage from '../../Management/containers/RoleManage';
+import UserManage from '../../Management/containers/UserManage';
+import KeywordManage from '../../Management/containers/KeywordManage';
+import KeywordEdit from '../../Management/containers/KeywordEdit';
+import ContactManage from '../../Management/containers/ContactManage';
+
+import Menus from '../../Management/containers/Menus';
+import Blank from '../../Management/containers/Blank';
+//邮件
+import Email from '../../Management/containers/Email';
+import EmailReceive from '../../Management/containers/EmailReceive';
+import EmailSend from '../../Management/containers/EmailSend';
+import EmailWrite from '../../Management/containers/EmailWrite';
+import EmailDetails from '../../Management/containers/EmailDetails';
+
+let managementRoutes = [
+    {
+        path: '/',
+        redirect: '/management/login',
+    },
+    {
+        path: '/blank',
+        component: Blank,
+        meta: {
+            title: '跳转中...',
+            login: true
+        }
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+            title: '登录'
+        },
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: Register,
+        meta: {
+            title: '注册'
+        },
+    },
+    {
+        path: '/reset-password',
+        name: 'reset-password',
+        component: ResetPassword,
+        meta: {
+            title: '重设密码'
+        },
+    },
+    {
+        path: '/email',
+        name: 'email',
+        redirect:'/management/email/email-receive',
+        component: Email,
+        meta: {
+            title: '邮件'
+        },
+        children: [
+            {
+                path: 'email-receive',
+                name: 'email-receive',
+                component: EmailReceive,
+                meta: {
+                    title: '收件箱'
+                }
+            },
+            {
+                path: 'email-send',
+                name: 'email-send',
+                component: EmailSend,
+                meta: {
+                    title: '发件箱'
+                }
+            },
+            {
+                path: 'email-write',
+                name: 'email-write',
+                component: EmailWrite,
+                meta: {
+                    title: '写邮件'
+                }
+            },
+            {
+                path: 'email-details',
+                name: 'email-details',
+                component: EmailDetails,
+                meta: {
+                    title: '邮件详情'
+                }
+            }
+        ]
+    },
+    {
+        path: '/menus',
+        name: 'menus',
+        component: Menus,
+        meta: {
+            title: '菜单'
+
+        },
+        children: [
+            {
+                path: 'service-type-manage',
+                name: 'service-type-manage',
+                component: ServiceTypeManage,
+                meta: {
+                    title: '服务类型管理'
+                }
+            },
+            {
+                path: 'merchant-list',
+                name: 'merchant-list',
+                component: MerchantList,
+                meta: {
+                    title: '商家信息管理',
+                    keepAlive:true
+                }
+            },
+            {
+                path: 'merchant-audit',
+                name: 'merchant-audit',
+                component: MerchantAudit,
+                meta: {
+                    title: '商家信息审核',
+                }
+            },
+            {
+                path: 'merchant-edit',
+                name: 'merchant-edit',
+                component: MerchantEdit,
+                meta: {
+                    title: '添加商家标注'
+                }
+            },
+            {
+                path: 'authentication',
+                name: 'authentication',
+                component: Authentication,
+                meta: {
+                    title: '审核商家认证信息'
+                }
+            },
+            {
+                path: 'unsigned-user',
+                name: 'unsigned-user',
+                component: UnsignedUser,
+                meta: {
+                    title: '未签用户'
+                }
+            },
+             {
+                path: 'port-dictionary',
+                name: 'port-dictionary',
+                component: PortDict,
+                meta: {
+                    title: '港口字典管理',
+                    keepAlive:true
+                }
+            },
+            {
+                path: 'port-particulars',
+                name: 'port-particulars',
+                component:  PortParticulars,
+                meta: {
+                    title: '港口详情'
+                }
+            },
+            {
+                path: 'region-dictionary',
+                name: 'region-dictionary',
+                component: RegionDict,
+                meta: {
+                    title: '区域字典管理'
+                }
+            },
+            {
+                path: 'charge-manage',
+                name: 'charge-manage',
+                component: ChargeManage,
+                meta: {
+                    title: '收费类型管理'
+                }
+            },
+            {
+                path: 'check-message',
+                name: 'check-message',
+                component: CheckMessage,
+                meta: {
+                    title: '审核信息发布'
+                }
+            },
+            {
+                path: 'contact-message',
+                name: 'contact-message',
+                component: ContactManage,
+                meta: {
+                    title: '合作联系管理'
+                }
+            },
+            {
+                path: 'keyword-manage',
+                name: 'keyword-manage',
+                component:  KeywordManage,
+                meta: {
+                    title: '关键字缴费管理'
+                }
+            },
+            {
+                path: 'keyword-edit',
+                name: 'keyword-edit',
+                component: KeywordEdit,
+                meta: {
+                    title: '关键字编辑'
+                }
+            },
+            {
+                path: 'authority-manage',
+                name: 'authority-manage',
+                component: AuthorityManage,
+                meta: {
+                    title: '权限管理'
+                }
+            },
+            {
+                path: 'role-manage',
+                name: 'role-manage',
+                component: RoleManage,
+                meta: {
+                    title: '角色管理'
+                }
+            },
+            {
+                path: 'user-manage',
+                name: 'user-manage',
+                component: UserManage,
+                meta: {
+                    title: '用户管理'
+                }
+            },
+        ]
+    }
+];
+
+export  default managementRoutes;

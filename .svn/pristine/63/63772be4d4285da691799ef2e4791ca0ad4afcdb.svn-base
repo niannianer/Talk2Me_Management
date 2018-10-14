@@ -1,0 +1,35 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.merchant {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    .menus{
+        width: 230px;
+        background-color: #dddddd;
+        padding: 5px 22px;
+        text-align: center;
+        max-height: 100%;
+        overflow-y: auto;
+        .menu{
+            display: block;
+            font-size: 16px;
+            color: #646464;
+            line-height: 59px;
+            text-decoration: none;
+            border-bottom: 1px solid #c7c7c7;
+            &.menu-active{
+                color: #47cdf5;
+                font-weight: 600;
+            }
+        }
+    }
+    .content-view{
+        padding: 10px 20px 20px 50px;
+        overflow: auto;
+        background-color: #fff;
+        position: relative;;
+    }
+}

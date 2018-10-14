@@ -1,0 +1,172 @@
+@charset "UTF-8";
+@import "../../../Common/less/variables";
+.authentication-wrap{
+    padding-bottom: 1rem;
+    .avatar-item{
+        padding: .5rem 0 .7rem;
+        margin-top: -.4rem;
+        &.nomargin{
+            margin: 0;
+        }
+        &.other-item{
+            padding: 10px 0 14px 150px;
+        }
+        .inner-img{
+            width: 100%;
+            min-height: 3rem;
+            height: auto;
+            max-height: 5rem;
+        }
+        .image-box{
+            width: 3rem;
+            min-height: 3rem;
+            height: auto;
+            max-height: 5rem;
+            position: relative;
+            float: left;
+            margin: 0 .3rem;
+            border: 1px solid #ccc;
+            .close-btn{
+                width: 1rem;
+                position: absolute;
+                top: -.45rem;
+                right: -.3rem;
+                background: #fff;
+                border-radius: 50%;
+            }
+        }
+        .show-img{
+            width: 3rem;
+            height: 3rem;
+            border: 2px dashed #ddd;
+        }
+
+    }
+    .upload-box{
+        width: 3rem;
+        min-height: 3rem;
+        height: auto;
+        max-height: 5rem;
+        border: 2px dashed #ddd;
+        position: relative;
+        float: left;
+        margin: 0 .3rem;
+        .icon{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 2rem;
+            color: #ddd;
+            margin-top: -.2rem;
+        }
+    }
+    .down-btn{
+        background: #0071c8;
+        color: #fff;
+        width: 80px;
+        height: 34px;
+        margin: 26px 0 4px 20px;
+        font-size: 14px;
+    }
+    .btn-wrap{
+        height: 84px;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .save-btn{
+        height: 44px;
+        width: 300px;
+    }
+    .item-card{
+        background: #fff;
+        margin: 0 0 .5rem 0;
+        padding: 0 .6rem;
+        .card-item{
+            font-size: .8rem;
+            line-height: 1rem;
+            &:first-child{
+                border: none;
+            }
+            .type-item{
+                border: 1px solid #ddd;
+                display: inline-block;
+                margin: .3rem .2rem;
+                height: 1.5rem;
+                line-height: 1.5rem;
+                color: @color-text-secondary;
+                border-radius: 3rem;
+                width: 4.8rem;
+                text-align: center;
+                font-size: .7rem;
+                &:first-child{
+                    margin-left: 0;
+                }
+                &.active{
+                    border-color: @bg-button;
+                    color: #fff;
+                    background: @bg-button;
+                }
+            }
+            .title{
+                color: @color-text-secondary;
+                padding: 10px 16px 0 10px;
+                width: 150px;
+                &.must{
+                    position: relative;
+                    &:before{
+                        content: '*';
+                        font-size: 1rem;
+                        color: red;
+                        position: absolute;
+                        top: .2rem;
+                        left: 0;
+                    }
+                }
+            }
+            .title-other{
+                color: @color-text-secondary;
+                padding: .5rem .8rem 0 .4rem;
+            }
+            .edit-item{
+                font-size: .7rem;
+                padding: .7rem 0;
+                color: @color-text;
+                width: 450px;
+
+            }
+            .place-text{
+                font-size: .6rem;
+                padding-bottom: .3rem;
+                padding-left: 6rem;
+                margin-top: -.4rem;
+            }
+            .icon-warp {
+                text-align: right;
+                width: 50%;
+                padding-right: .8rem;
+                img{
+                    width: .6rem;
+                    height: .8rem;
+                    vertical-align: middle;
+                    margin-left: .5rem;
+                }
+            }
+        }
+    }
+    .image-upload{
+        min-height: 3rem;
+        height: auto;
+        max-height: 5rem;
+        display: flex;
+        align-items: center;
+    }
+    .el-upload-list{
+        width: 450px;
+    }
+    .el-upload{
+        display: block;
+        text-align: left;
+    }
+}

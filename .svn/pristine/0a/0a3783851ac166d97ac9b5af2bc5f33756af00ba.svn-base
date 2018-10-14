@@ -1,0 +1,492 @@
+<template>
+    <div class="authentication-wrap" flex="dir:top">
+        <div class="item-card" flex-box="1">
+            <!--确认人姓名-->
+            <div class="card-item" flex="cross:center">
+                <div class="title must" flex-box="0">{{$t('lang.authentication.confirmName')}}</div>
+                <el-input flex-box="1" :placeholder="$t('lang.authentication.confirmNamePlace')" class="edit-item"
+                          v-model="info.confirmName" :readonly="pageType=='view'"></el-input>
+            </div>
+            <!--确认人电话-->
+            <div class="card-item" flex="cross:center">
+                <div class="title must" flex-box="0">{{$t('lang.authentication.confirmTel')}}</div>
+                <el-input flex-box="1" :placeholder="$t('lang.authentication.confirmTelPlace')" class="edit-item"
+                          v-model.number="info.confirmTel" :readonly="pageType=='view'"></el-input>
+            </div>
+            <!--资质注册号-->
+            <div class="card-item" flex="cross:center">
+                <div class="title must" flex-box="0">{{$t('lang.authentication.registCode')}}</div>
+                <el-input flex-box="1" :placeholder="$t('lang.authentication.registCodePlace')" class="edit-item"
+                          v-model="info.registCode" :readonly="pageType=='view'"></el-input>
+            </div>
+            <!--认领人身份证号码-->
+            <div class="card-item" flex="cross:center">
+                <div class="title must" flex-box="0">{{$t('lang.authentication.IDcode')}}</div>
+                <el-input flex-box="1" :placeholder="$t('lang.authentication.IDcodePlace')" class="edit-item"
+                          v-model="info.iDcode" :readonly="pageType=='view'"></el-input>
+            </div>
+            <!--认领人手持身份证照（原身份证照片）-->
+            <div class="card-item" flex="dir:top">
+                <div flex>
+                    <div class="title must" flex-box="0">{{$t('lang.authentication.IDPathImage')}}</div>
+                    <div class="avatar-item nomargin" flex-box="1" flex="dir:top">
+                        <el-upload
+                                class="upload-inner"
+                                :limit="1"
+                                :action="uploadUrl"
+                                :on-success="catchIDImageuploaded"
+                                :on-error="imgError"
+                                :on-remove="removeCatchID"
+                                :file-list="catchIDPath"
+                                :on-exceed="handleExceed"
+                                :before-upload="beforeAvatarUpload"
+                                list-type="picture">
+                            <div slot="tip" class="el-upload__tip" v-if="pageType != 'view'">
+                                {{$t('lang.authentication.IDPathImagePlace')}}
+                            </div>
+                            <span class="my-btn">
+                                 <el-button size="small" class="catchIDPath" type="primary" :disabled="pageType=='view'">点击上传</el-button>
+                            </span>
+                        </el-upload>
+                    </div>
+
+                </div>
+            </div>
+            <!--门脸照片-->
+            <div class="card-item" flex="dir:top">
+                <div flex>
+                    <div class="title must" flex-box="0">{{$t('lang.authentication.facePhotoPath')}}</div>
+                    <div class="avatar-item nomargin" flex-box="1" flex="dir:top">
+
+                        <el-upload
+                                class="upload-inner"
+                                :limit="1"
+                                :action="uploadUrl"
+                                :on-success="faceImageuploaded"
+                                :on-error="imgError"
+                                :on-remove="removeFace"
+                                :file-list="facePhotoPath"
+                                :on-exceed="handleExceed"
+                                :before-upload="beforeAvatarUpload"
+                                list-type="picture">
+                            <span class="my-btn">
+                                 <el-button size="small" type="primary" class="facePhotoPath" :disabled="pageType=='view'">
+                                点击上传
+                            </el-button>
+                            </span>
+                        </el-upload>
+                    </div>
+                </div>
+            </div>
+            <!--专业资质证书-->
+            <div class="card-item" flex="dir:top">
+                <div flex>
+                    <div class="title must" flex-box="0">{{$t('lang.authentication.copyPath')}}</div>
+                    <div class="avatar-item nomargin" flex-box="1" flex="dir:top">
+
+                        <el-upload
+                                class="upload-inner"
+                                :limit="1"
+                                :action="uploadUrl"
+                                :on-success="copyImageuploaded"
+                                :on-remove="removeCopy"
+                                :on-error="imgError"
+                                :file-list="copyPath"
+                                :on-exceed="handleExceed"
+                                :before-upload="beforeAvatarUpload"
+                                list-type="picture">
+                            <span class="my-btn">
+                                <el-button size="small" type="primary" class="copyPath" :disabled="pageType=='view'">点击上传</el-button>
+                            </span>
+                            <div slot="tip" class="el-upload__tip" v-if="pageType != 'view'">
+                                {{$t('lang.authentication.copyPathPlace')}}
+                            </div>
+                        </el-upload>
+                    </div>
+                </div>
+            </div>
+            <!--资质证照-->
+            <div class="card-item" flex="dir:top">
+                <div flex>
+                    <div class="title must" flex-box="0">{{$t('lang.authentication.licensePath')}}</div>
+                    <div class="avatar-item nomargin" flex-box="1" flex="dir:top">
+
+                        <el-upload
+                                class="upload-inner"
+                                :limit="1"
+                                :action="uploadUrl"
+                                :on-success="licenseImageuploaded"
+                                :on-remove="removeLicense"
+                                :on-error="imgError"
+                                :file-list="licensePath"
+                                :on-exceed="handleExceed"
+                                :before-upload="beforeAvatarUpload"
+                                list-type="picture">
+                            <span class="my-btn">
+                                 <el-button size="small" type="primary" class="licensePath" :disabled="pageType=='view'">点击上传</el-button>
+                            </span>
+                            <div slot="tip" class="el-upload__tip" v-if="pageType != 'view'">
+                                {{$t('lang.authentication.licensePathPlace')}}
+                            </div>
+                        </el-upload>
+                    </div>
+                </div>
+            </div>
+            <!--认领确认书-->
+            <div class="card-item" flex="dir:top">
+                <div flex>
+                    <div class="title must" flex-box="0">{{$t('lang.authentication.confirmPath')}}</div>
+                    <div class="avatar-item nomargin" flex-box="0">
+                        <el-upload
+                                class="upload-inner"
+                                :limit="1"
+                                :action="uploadUrl"
+                                :on-success="confirmImageuploaded"
+                                :on-remove="removeConfirm"
+                                :on-error="imgError"
+                                :file-list="confirmPath"
+                                :on-exceed="handleExceed"
+                                :before-upload="beforeAvatarUpload"
+                                list-type="picture">
+                            <span class="my-btn">
+                                <el-button size="small" type="primary" class="confirmPath" :disabled="pageType=='view'">
+                                    点击上传
+                                </el-button>
+                            </span>
+                            <div slot="tip" class="el-upload__tip" v-if="pageType != 'view'">
+                                {{$t('lang.authentication.confirmPathPlace')}}
+                            </div>
+                        </el-upload>
+                    </div>
+                    <button class="down-btn" @click.stop="downloadFile">下载</button>
+                </div>
+            </div>
+            <!--其它证明材料-->
+            <div class="card-item" flex="dir:top">
+                <div class="title-other" flex-box="0">{{$t('lang.authentication.othersPath')}}:
+                    {{$t('lang.authentication.othersPathPlace')}}
+                </div>
+                <div class="avatar-item other-item" flex-box="1">
+                    <el-upload
+                            class="upload-inner"
+                            :limit="imageMax"
+                            :action="uploadUrl"
+                            :on-success="imageuploaded"
+                            :file-list="othersPath"
+                            :on-exceed="handleExceed"
+                            :before-upload="beforeAvatarUpload"
+                            :on-remove="removeOthersPath"
+                            list-type="picture">
+                        <span class="my-btn">
+                            <el-button size="small" type="primary" class="othersPath" :disabled="pageType=='view'">点击上传</el-button>
+                        </span>
+                    </el-upload>
+                </div>
+            </div>
+        </div>
+        <div flex-box="1" class="btn-wrap">
+            <span class="my-btn">
+                <el-button v-if="pageType!='view'" type="primary" @click.stop="save()" class="save-btn">
+                    {{buttonText||'提交'}}
+                </el-button>
+            </span>
+        </div>
+    </div>
+</template>
+<script>
+
+    import $api2 from '../../../Common/tools/api2';
+    import './authentition.less';
+    import config from '../../../Common/tools/config';
+    import {mapState} from 'vuex';
+    import EventBus from '../../../Common/tools/event-bus';
+    import {session} from "../../../Common/tools/store";
+
+    export default {
+        name: 'tag-detail',
+        props: ['channel', 'buttonText', 'pageType'],
+        data() {
+            return {
+                maxSize: 10,
+                info: {
+                    merchantId: '',
+                    facePhotoPath: '',
+                    catchIDPath: '',
+                    copyPath: '',
+                    confirmPath: '',
+                    licensePath: '',
+                    othersPath: []
+                },
+                id: '',
+                imgServerUrl: '',
+                imageMax: 3,
+                canUpload: true,
+                code: '',
+                uploadUrl: '',
+                catchIDPath: [],
+                facePhotoPath: [],
+                copyPath: [],
+                licensePath: [],
+                confirmPath: [],
+                othersPath: [],
+                imgUploadUrl: '',
+                showAudit: false
+            }
+        },
+        components: {},
+        created() {
+            this.info.merchantId = this.$route.query.mId || '';
+            this.code = this.$route.query.code || '';
+            this.imgServerUrl = config.imgServerUrl;
+            let userEmail = session.getItem('oldEmail');
+            this.uploadUrl = `${config.apiUrl}/secure/merchant/fileUpload?userId=${userEmail}`
+            if (this.info.merchantId) {
+                this.getInfos();
+            }
+
+        },
+        computed: {
+            ...mapState(['unionid']),
+            uploadParams() {
+                return {
+                    userId: this.unionid || session.getItem('oldEmail')
+                };
+            }
+        },
+        methods: {
+            //提交
+            save() {
+                if (!this.checkWord()) {
+                    return;
+                }
+                if (!this.info.flag) {
+                    this.info.flag = 1;
+                }
+                this.info.submitEmail = this.unionid || session.getItem('oldEmail');
+                this.$emit('complete', this.info);
+
+            },
+            //获取商家认证信息
+            getInfos() {
+                $api2.get('/secure/merchant/query/authentication/merchantid', {
+                    merchantId: this.info.merchantId
+                }).then(res => {
+                    if (res.status !== 1) {
+                        //this.$message.error('获取消息失败！');
+                        return;
+                    }
+                    this.info = res.content || {};
+                    this.formatImgPath();
+                    if (this.channel == 'service') {
+                        this.$emit('loadedBack', this.info);
+                        EventBus.$emit('authflag', this.info.flag);
+                    }
+
+                })
+            },
+            //格式化图片地址
+            formatImgPath() {
+                //单张照片格式化成数组
+                //手持身份证、门脸照片、专业资质证书、资质证照、认领确认书
+                let pathKeys = ['catchIDPath', 'facePhotoPath', 'copyPath', 'licensePath', 'confirmPath'];
+                pathKeys.forEach(name => {
+                    if (this.info[name]) {
+                        this[name].push({
+                            name: this.info[name].split('/')[1],
+                            url: `${this.imgServerUrl}/${this.info[name]}`,
+                            urlShort: this.info[name]
+                        });
+                        document.getElementsByClassName(name)[0].style.display = "none"
+                    }
+                })
+
+                //其它材料
+                this.info.othersPath = JSON.parse(this.info.othersPath || '[]');
+                if (this.info.othersPath.length >= this.imageMax) {
+                    this.canUpload = false;
+                    document.getElementsByClassName('othersPath')[0].style.display = "none"
+                } else {
+                    this.canUpload = true;
+                    document.getElementsByClassName('othersPath')[0].style.display = "inline-block"
+                }
+                if (this.info.othersPath.length) {
+                    this.info.othersPath.forEach(val => {
+                        this.othersPath.push({
+                            name: val.split('/')[1],
+                            url: `${this.imgServerUrl}/${val}`,
+                            urlShort: val
+                        });
+                    });
+                }
+            },
+
+            //其它材料上传图片
+            imageuploaded(res) {
+                if (res.status == 1) {
+                    this.info.othersPath.push(res.content);
+                    if (this.info.othersPath.length >= this.imageMax) {
+                        this.canUpload = false;
+                    } else {
+                        this.canUpload = true;
+                    }
+                }
+                if (this.canUpload) {
+                    document.getElementsByClassName('othersPath')[0].style.display = "inline-block"
+                } else {
+                    document.getElementsByClassName('othersPath')[0].style.display = "none"
+                }
+            },
+            //手持身份证照片上传回调
+            catchIDImageuploaded(res, file) {
+                this.updateLoad(res, file, 'catchIDPath');
+            },
+            //资质复印件照片上传回调
+            copyImageuploaded(res, file) {
+                this.updateLoad(res, file, 'copyPath');
+            },
+            //专业资质证书照片上传回调
+            licenseImageuploaded(res, file) {
+                this.updateLoad(res, file, 'licensePath');
+            },
+            //认领确认书上传回调
+            confirmImageuploaded(res, file) {
+                this.updateLoad(res, file, 'confirmPath');
+            },
+            //门脸照片上传回调
+            faceImageuploaded(res, file) {
+                this.updateLoad(res, file, 'facePhotoPath');
+            },
+
+            //校验
+            checkWord() {
+                let {confirmTel, submitTel} = this.info;
+                //邮箱正则
+                let resg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+                //手机号码正则
+                let resm = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+                //电话号码正则
+                let resc = /^0\d{2,3}-?\d{7,8}$/;
+                //身份证号验证
+                let resId = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/;
+                if (!this.info.confirmName) {
+                    this.$message.error('请输入确认人姓名');
+                    return false;
+                } else if (!confirmTel) {
+                    this.$message.error('请输入确认人电话');
+                    return false;
+                } else if (!resm.test(confirmTel) && !resc.test(confirmTel)) {
+                    this.$message.error('请输入正确的确认人电话');
+                    return false;
+                } else if (!this.info.registCode) {
+                    this.$message.error('请输入资质注册号');
+                    return false;
+                } else if (!this.info.iDcode) {
+                    this.$message.error('请输入认领人身份证号码');
+                    return false;
+                } else if(this.info.iDcode){
+                    if(!resId.test(this.info.iDcode)){
+                        this.$message.error('请输入正确的认领人身份证号码');
+                        return false;
+                    }
+                }else if (!this.info.catchIDPath) {
+                    this.$message.error('请上传手持身份证照片');
+                    return false;
+                }else if(!this.info.facePhotoPath){
+                    this.$message.error('请上传门脸照片');
+                    return false;
+                }else if(!this.info.copyPath){
+                    this.$message.error('请上传专业资质证书');
+                    return false;
+                }else if (!this.info.licensePath) {
+                    this.$message.error('请上传资质证照');
+                    return false;
+                } else if (!this.info.confirmPath) {
+                    this.$message.error('请上传认领确认书');
+                    return false;
+                }
+                return true;
+            },
+            downloadFile() {
+                let myFrame = document.createElement('iframe');
+                myFrame.src = `${config.apiUrl}/secure/merchant/download/file`;
+                myFrame.style.display = 'none';
+                document.body.appendChild(myFrame);
+            },
+            handleExceed() {
+
+            },
+            beforeAvatarUpload() {
+
+            },
+            imgError() {
+
+            },
+            //删除手持身份证图片
+            removeCatchID(file, fileList) {
+                this.removeUpload(file, fileList, 'catchIDPath');
+            },
+            //删除门脸图片
+            removeFace(file, fileList) {
+                this.removeUpload(file, fileList, 'facePhotoPath');
+            },
+
+            //删除门脸图片
+            removeCopy(file, fileList) {
+                this.removeUpload(file, fileList, 'copyPath');
+            },
+            //删除门脸图片
+            removeLicense(file, fileList) {
+                this.removeUpload(file, fileList, 'licensePath');
+            },
+            //删除认领确认书
+            removeConfirm(file, fileList) {
+                this.removeUpload(file, fileList, 'confirmPath');
+            },
+            //删除其他材料
+            removeOthersPath(file, fileList) {
+              console.log(fileList)
+                this.othersPath = [];
+                this.info.othersPath = [];
+                fileList.forEach(item => {
+                    this.othersPath.push({
+                        name: item.name,
+                        url: item.url,
+                        urlShort: item.urlShort
+                    });
+                    this.info.othersPath.push(item.urlShort);
+                });
+                if (this.othersPath.length < 3) {
+                    document.getElementsByClassName('othersPath')[0].style.display = "inline-block"
+                } else {
+                    document.getElementsByClassName('othersPath')[0].style.display = "none"
+                }
+            },
+            //上传成功格式化数据
+            updateLoad(res, file, keyName) {
+                // let pathKeys = ['catchIDPath','facePhotoPath','copyPath','licensePath','confirmPath']
+                if (res.status == 1) {
+                    this.info[keyName] = res.content;
+                    this[keyName].push({
+                        name: file.name,
+                        url: `${this.imgServerUrl}/${res.content}`,
+                        urlShort: res.content
+                    });
+                    document.getElementsByClassName(keyName)[0].style.display = "none"
+                }
+            },
+            //只允许上传一张，删除图片格式化数据
+            removeUpload(file, fileList, keyName) {
+                this[keyName] = [];
+                this.info[keyName] = '';
+                document.getElementsByClassName(keyName)[0].style.display = "inline-block"
+
+            },
+        },
+        mounted() {
+
+        },
+        destroyed() {
+
+        }
+    }
+</script>

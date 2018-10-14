@@ -1,0 +1,82 @@
+<template>
+    <div class="contact-us">
+        <nav-title title="合作联系"></nav-title>
+        <div class="service">
+            <el-row :gutter="40">
+                <el-col :span="12" class="my-col" v-for="item in serviceList">
+                    <p class="title">{{item.title}}</p>
+                    <p>{{item.content}}</p>
+                </el-col>
+            </el-row>
+        </div>
+        <div class="message">
+            <p class="text">合作意向信息提交</p>
+            <div flex="box:mean">
+                <div flex class="inputs">
+                    <span class="name">姓名：</span>
+                    <span><el-input size="small"></el-input></span>
+                </div>
+                <div flex class="inputs">
+                    <span class="name">公司名称：</span>
+                    <span><el-input size="small"></el-input></span>
+                </div>
+            </div>
+            <div flex="box:mean">
+                <div flex class="inputs">
+                    <span class="name">电子邮件：</span>
+                    <span><el-input size="small"></el-input></span>
+                </div>
+                <div flex class="inputs">
+                    <span class="name">联系电话：</span>
+                    <span><el-input size="small"></el-input></span>
+                </div>
+            </div>
+            <div>
+                <p>具体合作意向</p>
+                <textarea class="text-box" v-model="writeText"></textarea>
+            </div>
+            <div class="btn">
+                <el-button type="primary">提交</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2';
+    import NavTitle from '../components/nav/nav';
+    import '../less/contact-us.less'
+    export default {
+        name: "contact-us",
+        data(){
+            return{
+                content:'',
+                writeText:'',
+                serviceList: [
+                    {title:'服务商地图显示',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                    {title:'服务商评价管理',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                    {title:'优质服务商推荐',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                    {title:'精准用户营销',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                    {title:'用户搜索 服务推荐',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                    {title:'产品代理',content: '在海图/地图一定比例尺反击显示服务商户信息，向全平台用户展示，达到广告效应。'},
+                ]
+            }
+        },
+        created(){
+
+        },
+        components:{
+            NavTitle
+        },
+        methods:{
+            //获取列表
+            getList(){
+                $api2.get('/secure/merchant/simplelist/query/userid',{userid: this.unionid}).then(res => {
+                    if(res.status == 1){
+                        console.log(res)
+                    }
+                })
+            },
+        }
+    }
+</script>

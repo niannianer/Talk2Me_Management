@@ -1,0 +1,30 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.port-dictionary {
+    position: relative;
+    width: 100%;
+    .search {
+        height: 50px;
+    }
+    .search-flag{
+        width: 300px;
+        margin-right: 15px;
+    }
+    .search-input{
+        width: 300px;
+        margin-right: 15px;
+    }
+    .search-name{
+        margin-right: 15px;
+    }
+    .el-button {
+        margin-left: 5px;
+    }
+    .el-dialog {
+    	width : 80%;
+    }
+    .page-tools{
+        margin-top:  15px;
+    }
+}

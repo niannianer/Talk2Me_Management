@@ -1,0 +1,67 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.my-service {
+    position: relative;
+    width: 100%;
+    padding: 20px 0px 10px;
+    color: #333;
+    .el-scrollbar__wrap {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    .el-scrollbar__bar.is-horizontal{
+        display: none;
+    }
+    .title {
+        margin-bottom: 20px;
+        span {
+            color: #000;
+            font-weight: 700;
+            padding: 10px 0;
+            border-bottom: 3px solid #40ccf6;
+        }
+    }
+    .info {
+        .el-row {
+            padding: 10px 0;
+        }
+    }
+    .label-name{
+        display: inline-block;
+        min-width: 50px;
+        text-align: right;
+        color: #777;
+    }
+    .auth-wrap{
+        padding-top: 20px;
+        margin-top: 10px;
+    }
+    .status-action{
+            background: #fff;
+            padding: 10px 0;
+            font-weight: bold;
+        }
+        .status-box{
+            color: chocolate;
+            .remind-text{
+                color: #666;
+                font-size: 12px;
+                margin-left: 50px;
+            }
+        }
+    .inner-title{
+        .sub-name{
+            color: #40ccf6;
+            font-weight: bold;
+        }
+    }
+    .img-path{
+        width: 120px;
+        height: 120px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        margin-right: 10px;
+    }
+    
+}

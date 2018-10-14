@@ -1,0 +1,55 @@
+<template>
+    <div class="attention-me">
+        <nav-title title="关注我的"></nav-title>
+        <div class="my-table">
+            <el-table
+                    :data="attentionList"
+                    :row-class-name="tableRowClassName"
+                    v-loading="loading"
+                    style="width: 100%">
+                <el-table-column prop="name" label="用户名"></el-table-column>
+                <el-table-column prop="roleselect" label="工作性质"></el-table-column>
+                <el-table-column prop="city" label="地址"></el-table-column>
+            </el-table>
+        </div>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2';
+    import {session} from '../../Common/tools/store';
+    import NavTitle from '../components/nav/nav';
+    import '../less/attention-me.less'
+    export default {
+        name: "attention-me",
+        data(){
+            return{
+                loading:false,
+                attentionList:[],
+                userEmail:'',
+            }
+        },
+        created(){
+            this.userEmail = session.getItem('oldEmail');
+            this.getList()
+        },
+        components:{
+            NavTitle
+        },
+        methods:{
+            //获取列表
+            getList(){
+                this.loading = true;
+                $api2.get('/secure/merchant/attentions/query',{userid:this.userEmail}).then(res => {
+                    this.loading = false;
+                    this.attentionList = res.content
+                })
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex%2 == 0) {
+                    return 'success-row';
+                }
+            }
+        }
+    }
+</script>

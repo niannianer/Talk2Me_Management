@@ -1,0 +1,55 @@
+<template>
+    <div class="my-attention">
+        <nav-title title="我的关注"></nav-title>
+        <div class="my-table">
+            <el-table
+                    :data="content"
+                    v-loading="loading"
+                    style="width: 100%">
+                <el-table-column prop="merchantName" label="服务商名称"></el-table-column>
+                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="service" label="服务"></el-table-column>
+                <el-table-column prop="telephone" label="电话"></el-table-column>
+            </el-table>
+        </div>
+    </div>
+</template>
+
+<script>
+    import {mapState} from 'vuex';
+    import NavTitle from '../components/nav/nav';
+    import $api2 from '../../Common/tools/api2';
+    import '../less/my-attention.less'
+
+    export default {
+        name: 'my-attention',
+        data(){
+            return {
+                content:[],
+                loading:false
+            }
+        },
+        created(){
+            this.getList()
+        },
+        components: {
+            NavTitle
+        },
+        computed: {
+            ...mapState(['unionid'])
+        },
+        methods: {
+            //获取列表
+            getList(){
+                this.loading = true;
+                $api2.get('/secure/merchant/attentionmerchants',{userid:this.unionid}).then(res => {
+                    this.loading = false;
+                    this.content = res.content
+                })
+            }
+        },
+        destroyed(){
+
+        }
+    }
+</script>

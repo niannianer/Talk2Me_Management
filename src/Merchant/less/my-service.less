@@ -1,0 +1,83 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.my-service {
+    position: relative;
+    width: 100%;
+    padding: 20px 0 10px;
+    color: #333;
+    .info {
+        .el-row {
+            padding: 10px 0;
+        }
+        .messages {
+        }
+        .table-box {
+            width: 100%;
+            font-size: 15px;
+            border:solid #e0e0e0;
+            border-width:1px 0 0 1px;
+            td {
+                width: 50%;
+                height: 60px;
+                line-height: 60px;
+                border:solid #e0e0e0;
+                border-width:0 1px 1px 0;
+                //span {
+                //    display: inline-block;
+                //    padding: 18px 0;
+                //}
+                .lables {
+                    display: inline-block;
+                    width: 90px;
+                    padding-left: 20px;
+                    background-color: #f9f9f9;
+                }
+            }
+        }
+    }
+    .label-name{
+        display: inline-block;
+        min-width: 50px;
+        text-align: right;
+        color: #777;
+        margin-bottom: 10px;
+    }
+    .auth-wrap{
+        padding-top: 20px;
+        margin-top: 10px;
+    }
+    .status-action{
+            background: #fff;
+            padding: 10px 0;
+            font-weight: bold;
+        }
+        .status-box{
+            color: chocolate;
+            .remind-text{
+                color: #666;
+                font-size: 12px;
+                margin-left: 50px;
+            }
+        }
+    .inner-title{
+        margin-bottom: 10px;
+        .sub-name{
+            color: #40ccf6;
+            font-weight: bold;
+            font-size: 15px;
+        }
+    }
+    .img-path{
+        width: 120px;
+        height: 120px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        margin-right: 10px;
+    }
+    @media screen and (max-width: 1220px) {
+        td {
+            line-height: 30px;
+        }
+    }
+}

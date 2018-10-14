@@ -1,0 +1,67 @@
+<template>
+    <div class="merchant-edit" >
+        <nav-title title="标注新服务商"></nav-title>
+        <merchant-info :pageType="type" @complete="complete"></merchant-info>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2.js';
+    import {mapState} from 'vuex';
+    import MerchantInfo from '../components/MerchantInfo/MerchantInfo';
+    import NavTitle from '../components/nav/nav';
+    import {local} from '../../Common/tools/store.js';
+    export default {
+        name: 'merchant-edit',
+        data(){
+            return {
+                showPort: false,
+                timeout: false,
+                info: {
+                    flag: 1,
+                    level: 1,
+                    thumb: [],
+                    lon: '',
+                    lat: ''
+                },
+                mId: '',
+                type: '',
+                isEdit: false,
+                keyUpTime: null,
+            }
+        },
+        created(){
+            let query = this.$route.query;
+            this.mId = query.mId || '';
+            this.type = query.type || 'add';
+        },
+        components: {
+            MerchantInfo, NavTitle
+        },
+        computed: {
+            ...mapState(['userEmail'])
+        },
+        methods: {
+            //商家信息填写完成
+            complete(result){
+                this.info.merchant = result;
+                $api2.post('/secure/merchant/save',this.info.merchant).then( res => {
+                    if(res.status){
+                        this.$message.success('提交成功！');
+                        setTimeout(()=>{
+                            this.$router.push(`/management/merchant?mId=${this.info.merchant.merchantId}`);
+                        },2000)
+                    }else{
+                        this.$message.error('提交失败,请稍后再试！');
+                    }
+                });
+            }
+        },
+        mounted() {
+            
+        },
+        destroyed(){
+
+        }
+    }
+</script>

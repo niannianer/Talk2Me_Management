@@ -1,0 +1,123 @@
+<template>
+    <div class="email-write">
+        <div flex="dir:top">
+            <el-form label-width="80px">
+                <el-form-item label="收件人">
+                    <el-input v-model="name" placeholder="请输入收件人名称，以逗号隔开"></el-input>
+                </el-form-item>
+                <el-form-item label="主题">
+                    <el-input v-model="title" placeholder="请输入主题"></el-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div>
+            <div id="editorElem">
+            </div>
+        </div>
+        <div style="margin-top: 20px">
+            <el-button type="success" size="small" @click="sendEmail">发送</el-button>
+        </div>
+    </div>
+</template>
+<script>
+    import axios from 'axios';
+    import E from 'wangeditor';
+    import $api from '../../Common/tools/api';
+    import {session,local} from '../../Common/tools/store.js';
+    import config from '../../Common/tools/config.js';
+    import '../less/email-write.less';
+    export default {
+        name: 'email-write',
+        data(){
+            return {
+                editorContent: '',
+                name: '',
+                title: '',
+                user: '',
+            }
+        },
+        created(){
+            if(this.$route.query.user){
+                this.name = this.$route.query.user
+            }
+            this.user = local.getItem('userEmail');
+        },
+        mounted(){
+            // 上传图片
+            let editor = new E('#editorElem');
+            editor.customConfig.uploadImgServer = `${$api.serverUrl}/secure/merchant/fileUpload`;
+            //editor.customConfig.uploadImgShowBase64 = true;
+            editor.customConfig.uploadFileName = 'file';
+            //editor.customConfig.debug = true;
+            editor.customConfig.uploadImgHooks = {
+                // before: function (xhr, editor, files) {
+                //     console.log('1' + files)
+                // },
+                success: function (xhr, editor, result) {
+                    console.log('2' + JSON.stringify(result))
+                },
+                fail: function (xhr, editor, result) {
+                    console.log('3' + JSON.stringify(result))
+                },
+                error: function (xhr, editor) {
+                    console.log('4' + editor)
+                },
+                timeout: function (xhr, editor) {
+                    console.log('5' + editor)
+                },
+                customInsert: function (insertImg, result, editor) {
+                    console.log('6' + JSON.stringify(result));
+                    let url = config.imgServerUrl + '/' + result.content;
+                    insertImg(url)
+                }
+            };
+            editor.customConfig.onchange = (html) => {
+                this.editorContent = html;
+                console.log(html)
+            };
+            editor.create()
+        },
+        computed: {},
+        methods: {
+            //发送邮件
+            sendEmail(){
+                this.name = this.name.replace(',','，');
+                let receiveLs = this.name.split('，');
+                receiveLs.forEach(item => {
+                    $api.get('/user/ifexist',{userStr:item}).then(res => {
+                        if(res.status == 0){
+                            this.$message.error(`未找到${item}用户`);
+                            return false
+                        }
+                    });
+                });
+                receiveLs = receiveLs.map(item => {
+                    return {
+                        receiveUser: item
+                    }
+                });
+                let param = {
+                    messageSend:{
+                        title: this.title,
+                        sendUser: this.user,
+                        content: this.editorContent,
+                        type: 'private',
+                    },
+                    receiveLs:receiveLs
+                };
+                console.log(JSON.stringify(param));
+                $api.post('/user/message/send',param).then(res => {
+                    this.loading = false;
+                    if(res.status == 1){
+                        this.$message.success('发送成功')
+                    }else {
+                        this.$message.error('发送失败')
+                    }
+                });
+            },
+        },
+        destroyed(){
+
+        }
+    }
+</script>

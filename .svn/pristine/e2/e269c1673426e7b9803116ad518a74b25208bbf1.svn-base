@@ -1,0 +1,30 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.menu-warp {
+    position: relative;
+    width: 100%;
+    .menus{
+        width: 160px;
+        background-color: #354052;
+        padding: 20px 0;
+        .menu{
+            padding-left: .75rem;
+            display: block;
+            font-size: 14px;
+            color: #A6ACC2;
+            line-height: 34px;
+            text-decoration: none;
+            &.menu-active{
+                color: #fff;
+            }
+        }
+    }
+    .content-view{
+        padding: .75rem;
+        overflow: auto;
+    }
+    .close {
+        margin: 20px 5px;
+    }
+}

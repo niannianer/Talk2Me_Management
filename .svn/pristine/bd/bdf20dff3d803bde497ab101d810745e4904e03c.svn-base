@@ -1,0 +1,204 @@
+<template>
+    <div class="label-claim">
+        <nav-title title="我的标注列表"></nav-title>
+        <div>
+            <div flex="main:right">
+                <el-button size="small" type="primary" @click.stop="pathTo('add')">免费标注服务商</el-button>
+            </div>
+        </div>
+        <div class="my-table">
+            <el-table
+                    :data="lists"
+                    highlight-current-row
+                    @current-change="handleCurrentChange">
+                <el-table-column prop="merchantName" label="名称"></el-table-column>
+                <el-table-column prop="adress" label="地址"></el-table-column>
+                <el-table-column label="操作" width="100">
+                    <template slot-scope="scope">
+                        <el-button size="mini" icon="el-icon-edit" @click.stop="pathTo('update',scope.$index)">编辑</el-button>
+                        <!-- <el-button size="mini" icon="el-icon-delete">删除</el-button> -->
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+        <div class="statement">
+            <span style="color: #ff0000">声明：在船队在线HiFleet平台上标注、更正、认领服务商都是免费的！</span>
+            <span style="float: right">选择一个标注进行认领</span>
+            <div flex="main:right">
+                <el-button size="small" type="primary" @click.stop="toClaim">{{buttonText}}</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import $api2 from '../../Common/tools/api2.js';
+    import {mapState} from 'vuex';
+    import {marchantText} from '../../Common/filters/index.js';
+    import { Message } from 'element-ui';
+    import NavTitle from '../components/nav/nav';
+    import '../less/label-claim.less'
+    import {session} from "../../Common/tools/store";
+    export default {
+        name: 'label-claim',
+        data(){
+            return {
+                radio: '',
+                showDialog: false,
+                lists: [],
+                sendInfo: {
+                    merchantServiceTypeId: '',
+                    merchantTypeId: '',
+                    nameZh: '',
+                    nameEn: '',
+                    flag: ''
+                },
+                dialogTitle: '',
+                buttonText: '认领我的服务',
+                oldEmail:''
+            }
+        },
+        created(){
+            this.oldEmail = session.getItem('oldEmail');
+            this.getList();
+        },
+        components: {
+            NavTitle
+        },
+        computed: {
+            ...mapState(['maerchanttype','claimedMId','isClaimed','unionid'])
+        },
+        methods: {
+            //获取标注列表
+            getList(){
+                $api2.get('/secure/merchant/simplelist/query/userid',{
+                    userid: this.oldEmail || ''
+                }).then(res => {
+                    this.loading = false;
+                    if(res.status == 1){
+                        this.lists = res.content;
+                    }else if(res.status == 408){
+                        Message({
+                            type: 'error',
+                            message: '加载失败～'
+                        })
+                    }
+                })
+            },
+            //修改／新增 保存
+            updateSave(){
+                this.showDialog = false;
+                $api2.post('/secure/merchant/servicetype/save' ,this.sendInfo).then(res => {
+                    if(res.status == 1){
+                        this.getLists()
+                        this.$message.success('保存成功')
+                    }else {
+                        this.$message.error('保存失败')
+                    }
+                }).catch(err =>{
+                    console.log('err2')
+                });
+            },
+            //切换为文字类型
+            getTypes(row,column) {
+                let types =  row[column.property];
+                return marchantText(types);
+            },
+            //添加服务商
+            pathTo(type,index){
+                if(type == 'add'){
+                    this.$router.push('/management/merchant/merchant-edit');
+                }else if(type == 'update'){
+                    this.$router.push({
+                        path: '/management/merchant/merchant-edit',
+                        query: {
+                            mId: this.lists[index].merchantId,
+                            type: 'edit'
+                        }
+                    });
+                }
+                
+            },
+            //切换为文字状态
+            getFlag(row,column) {
+                let status =  row[column.property];
+                if(status == 0){
+                    return '失效'
+                }else if(status == 1){
+                    return '正常'
+                }
+                return status
+            },
+            toClaim(){
+                //认领
+                if(!this.mId){
+                    this.$message.error('请选择服务商');
+                    return;
+                }
+                //用户已认领、当前选的商家不是该用户认领的商家，给提示
+                if(this.isClaimed && this.mId != this.claimedMId){
+                    this.$message.error('每个用户只能认领一家商户');
+                    return false;
+                }
+                //用户已认领、当前选的商家是该用户认领的商家，进入可编辑页面
+                if(this.isClaimed && this.mId == this.claimedMId){
+                    this.$router.push(`/management/merchant/my-service`);
+                    return false;
+                }
+
+                let message = this.info.id ? '该服务商已被认领，是否申请重新认领？' : '确认认领该服务商？';
+                this.$confirm(message, '提示', {
+                  confirmButtonText: '是',
+                  cancelButtonText: '否',
+                  type: 'warning'
+                }).then(() => {
+                  let flag = this.info.id;
+                    //该商户已被认领(走重新认领)：重新提交服务商信息，传oldMerchantId
+                    if(flag){
+                        this.$router.push({
+                            path: '/management/merchant/claim-edit',
+                            query: {
+                                omId: this.mId,
+                                flag: 1,
+                                action: 'claim',
+                                type: 'edit'
+                            }
+                        });
+                    }else{
+                        //该商户未被认领(走认领)：用户可编辑当前服务商信息
+                        this.$router.push({
+                            path: '/management/merchant/claim-edit',
+                            query: {
+                                type: 'edit',
+                                mId: this.mId,
+                                action: 'claim'
+                            }
+                        });
+                    }
+                }).catch(() => {
+                           
+                });
+            },
+            //选择商家
+            handleCurrentChange(val){
+                this.info = val;
+                console.log('val  ' + JSON.stringify(val));
+                this.mId = val.merchantId;
+                console.log('merchantId  ' + this.mId);
+                console.log('claimedMId  ' + this.claimedMId);
+                if(this.info.id){
+                    if(this.mId == this.claimedMId){
+                        this.buttonText = '修改';
+                        return;
+                    }
+                    this.buttonText = '重新认领服务';
+                }else{
+                    this.buttonText = '认领我的服务';
+                }
+            }
+        },
+        destroyed(){
+
+        }
+    }
+</script>

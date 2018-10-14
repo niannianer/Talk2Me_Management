@@ -1,0 +1,45 @@
+@charset "UTF-8";
+@import "../../Common/less/variables";
+
+.facilitator-comment {
+    position: relative;
+    width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 0 10px;
+    .comment {
+        width: 700px;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        .name {
+            font-size: 20px;
+            padding: 10px 0;
+        }
+        .text {
+            padding: 10px 0;
+            .text-box {
+                width: 680px;
+                height: 100px;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+        }
+        .btn {
+            padding: 10px 0;
+            text-align: center;
+        }
+    }
+    .info {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        div {
+            padding-bottom: 10px;
+        }
+        .name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+}
