@@ -21,9 +21,9 @@
                       v-loading="loading"  element-loading-text="拼命加载中"
                       @selection-change="selsChange">
                 <el-table-column type="selection" width="65" align="center"></el-table-column>
-                <el-table-column prop="regionId" label="区域ID" align="center" ></el-table-column>
-                <el-table-column prop="regionZH" label="中文名称" align="center" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="regionEN" label="英文名称" align="center" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="id" label="ID" align="center" ></el-table-column>
+                <el-table-column prop="nameZh" label="中文名称" align="center" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="nameEn" label="英文名称" align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column   label="操作" header-align="center" align="center" width="160px">
                   <template scope="scope">
                       <el-button  size="small" type="primary" @click="editRow(scope.row)">编辑</el-button>
@@ -42,14 +42,28 @@
                     <el-row type="flex" justify="center">
                         <el-col :span="20">
                             <el-form-item label="中文名称" prop="regionZH">
-                                <el-input v-model="dataForm.regionZH" placeholder="请输入中文名称" :maxlength="255"></el-input>
+                                <el-input v-model="dataForm.nameZh" placeholder="请输入中文名称" :maxlength="255"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row type="flex" justify="center">
                         <el-col :span="20">
                             <el-form-item label="英文名称" prop="regionEN">
-                                <el-input v-model="dataForm.regionEN" placeholder="请输入英文名称" :maxlength="100"></el-input>
+                                <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :maxlength="100"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="20">
+                            <el-form-item label="中文说明" prop="descriptionZh">
+                                <el-input v-model="dataForm.descriptionZh" placeholder="请输入中文说明" :maxlength="255"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="20">
+                            <el-form-item label="英文说明" prop="descriptionEn">
+                                <el-input v-model="dataForm.descriptionEn" placeholder="请输入英文说明" :maxlength="100"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -76,16 +90,16 @@
         data(){
             return {
                 dataForm : {
-                    regionId : null,
-                    regionEN : '',
-                    regionZH : ''
+                    id : null,
+                    nameEn : '',
+                    nameZh : ''
                 },
                 formValidate : {
-                    regionEN : [
+                    nameEn : [
                                     { required: true, message: '请输入英文名称！', trigger: 'blur' },
                                     {  max: 100, message: '长度在 100个字符之内', trigger: 'blur' }
                                   ],
-                    regionZH: [
+                    nameZh: [
                                     { required: true, message: '请输入中文名称！', trigger: 'blur' },
                                     {  max: 100, message: '长度在 100个汉字之内', trigger: 'blur' }
                                ]
@@ -106,10 +120,8 @@
             loadData(){
                 this.loading = true;
                 let param = {};
-                if(this.regionName){
-                    param.regionName = this.regionName
-                }
-                $api.get('/secure/dictionary/region/querylist',param).then(res => {
+                param.name = this.regionName || ''
+                $api.get('/management/coursetype/query',param).then(res => {
                     this.lists = res.content || [];
                     this.loading = false;
                 }).catch(err =>{
@@ -120,20 +132,20 @@
             // 编辑
             editRow(row){
                 this.dialogVisible = true;
-                this.dataForm.regionEN = row.regionEN;
-                this.dataForm.regionZH = row.regionZH;
-                this.dataForm.regionId = row.regionId;
+                this.dataForm.nameEn = row.nameEn;
+                this.dataForm.nameZh = row.nameZh;
+                this.dataForm.id = row.id;
             },
             // 添加
             addShow(){
                 this.dialogVisible = true;
-                this.dataForm.regionId = null;
-                this.dataForm.regionEN = '';
-                this.dataForm.regionZH = '';
+                this.dataForm.id = null;
+                this.dataForm.nameEn = '';
+                this.dataForm.nameZh = '';
             },
             //保存
             addSave(){
-                $api.post("/secure/dictionary/region/save",this.dataForm).then(res => {
+                $api.post("/management/coursetype/save",this.dataForm).then(res => {
                     if(res.status !== 1){
                         this.$message.error('提交失败');
                         return false;
@@ -147,7 +159,7 @@
             //删除
             deleteRow(index,row){
                 this.$confirm('删除后不可恢复，确认删除？').then(() => {
-                    $api.post("/secure/dictionary/region/deletelist",[{regionId:row.regionId}]).then(res => {
+                    $api.post("/secure/dictionary/region/deletelist",[{id:row.id}]).then(res => {
                         if(res.status !== 1){
                             this.$message.error('删除失败');
                         }else {
@@ -165,7 +177,7 @@
                 let ids = [];
                 rows.forEach(item => {
                     ids.push({
-                        regionId: item.regionId
+                        id: item.id
                     })
                 });
                 this.$confirm('确定要删除选中的文件吗?','提示').then(() =>{

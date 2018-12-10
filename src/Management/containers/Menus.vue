@@ -53,6 +53,10 @@
                          active-class="menu-active"
                          replace>用户管理
             </router-link>
+            <router-link class="menu" :to="{path:'/management/menus/region-dictionary'}"
+                         active-class="menu-active"
+                         replace>课程种类管理
+            </router-link>
             <!-- <div class="close">
                 <el-button size="small" class="close" type="danger" plain @click="toOut">退出</el-button>
             </div> -->

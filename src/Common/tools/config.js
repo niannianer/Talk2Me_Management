@@ -2,7 +2,7 @@
  * Created by DELL on 2018/3/27.
  */
 let protocol = window.location.protocol;
-let apiUrl = 'http://test.hifleet.com:71/IntratradeSystem';
+let apiUrl = 'http://holer.org:65115';
 //let apiUrl = 'http://merchant.hifleet.com:71/IntratradeSystem';
 let imgServerUrl = 'http://test.hifleet.com:8082';
 //let imgServerUrl = 'http://merchant.hifleet.com:8082';

@@ -36,7 +36,7 @@ let get = (path, data = {}) => {
         url,
         timeout: 10000,
         method: 'get',
-        withCredentials: true
+        // withCredentials: true
     }).then(response => {
         if (response.status == 200) {
             return response.data;
@@ -79,8 +79,11 @@ let  post = (path, data = {},type) => {
     let axiosParam = {
         url,
         method: 'post',
-        withCredentials: true,
-        data: data
+        // withCredentials: true,
+        data: data,
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        // }
     };
     if(type == 'login' || type == 'refreshToken'){
         axiosParam.auth = {
